@@ -1,0 +1,16 @@
+{
+  "globalDependencies": {
+    "gulp": "registry:dt/gulp#3.8.0+20160724062653",
+    "gulp-concat": "registry:dt/gulp-concat#0.0.0+20160316155526",
+    "gulp-nodemon": "registry:dt/gulp-nodemon#0.0.0+20160316155526",
+    "gulp-remember": "registry:dt/gulp-remember#0.0.0+20160316155526",
+    "gulp-sourcemaps": "registry:dt/gulp-sourcemaps#0.0.0+20160316155526",
+    "gulp-util": "registry:dt/gulp-util#0.0.0+20160316155526"
+  },
+  "globalDevDependencies": {
+    "gulp-tslint": "registry:dt/gulp-tslint#3.6.0+20160316155526",
+    "gulp-typescript": "registry:dt/gulp-typescript#0.0.0+20160317120654",
+    "tape": "registry:dt/tape#4.2.2+20160317120654",
+    "typescript": "registry:dt/typescript#0.4.0+20160317120654"
+  }
+}

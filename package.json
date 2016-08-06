@@ -1,0 +1,40 @@
+{
+  "name": "gulp-gate",
+  "version": "0.0.1",
+  "description": "Neat project tasks interface",
+  "main": "index.js",
+  "scripts": {
+    "test": "node-tape ./test/index.js | faucet",
+    "start": "ts-node source/index.ts"
+  },
+  "keywords": [
+    "gulp",
+    "task"
+  ],
+  "author": "Zero Bias",
+  "license": "ISC",
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
+    "gulp-concat": "^2.6.0",
+    "gulp-livereload": "^3.8.1",
+    "gulp-nodemon": "^2.1.0",
+    "gulp-notify": "^2.2.0",
+    "gulp-remember": "^0.3.1",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-util": "^3.0.7"
+  },
+  "devDependencies": {
+    "bucker": "^1.1.1",
+    "faucet": "0.0.1",
+    "gulp-run": "^1.7.1",
+    "gulp-tslint": "^6.0.2",
+    "gulp-typescript": "^2.13.6",
+    "ramda": "^0.22.0",
+    "tape": "^4.6.0",
+    "ts-node": "^1.2.2",
+    "tslint": "^3.14.0",
+    "typescript": "^2.1.0-dev.20160806",
+    "typings": "^1.3.2"
+  }
+}

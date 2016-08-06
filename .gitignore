@@ -1,0 +1,7 @@
+~$*
+*~
+node_modules/
+.idea/
+.alm/
+.vscode/
+*.7z
