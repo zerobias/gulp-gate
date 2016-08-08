@@ -14,5 +14,5 @@ import './configcheck';
 // new RDir();
 // let rdir = 
 
-// require('./config-example.spec.ts');
+import './config-example.spec';
 export default {};

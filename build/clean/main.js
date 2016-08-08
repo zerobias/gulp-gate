@@ -10,5 +10,9 @@ util.initPrint('main');
 // import * as stylus from 'gulp-stylus';
 // console.log(cssnano);
 require('./configcheck');
+// console.log(RDir);
+// new RDir();
+// let rdir = 
+require('./config-example.spec');
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = {};
