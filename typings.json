@@ -14,6 +14,7 @@
     "gulp-babel": "registry:dt/gulp-babel#6.1.0+20160316171810",
     "gulp-concat": "registry:dt/gulp-concat#0.0.0+20160316155526",
     "gulp-tslint": "registry:dt/gulp-tslint#3.6.0+20160316155526",
+    "gulp-typedoc": "registry:dt/gulp-typedoc#0.0.0+20160316155526",
     "gulp-typescript": "registry:dt/gulp-typescript#0.0.0+20160317120654",
     "orchestrator": "registry:dt/orchestrator#0.0.0+20160316155526",
     "source-map": "registry:dt/source-map#0.0.0+20160317120654",

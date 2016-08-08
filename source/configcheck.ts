@@ -4,8 +4,6 @@
 import * as util from './util';
 util.initPrint('config check');
 
-import { func } from './propschecking';
-
 import { sample as config } from './config-example';
 
 const source = config.source;

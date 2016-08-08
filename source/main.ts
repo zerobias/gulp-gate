@@ -14,5 +14,4 @@ import './configcheck';
 // new RDir();
 // let rdir = 
 
-import './config-example.spec';
 export default {};

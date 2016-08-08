@@ -7,6 +7,7 @@
 /// <reference path="globals/gulp-remember/index.d.ts" />
 /// <reference path="globals/gulp-sourcemaps/index.d.ts" />
 /// <reference path="globals/gulp-tslint/index.d.ts" />
+/// <reference path="globals/gulp-typedoc/index.d.ts" />
 /// <reference path="globals/gulp-typescript/index.d.ts" />
 /// <reference path="globals/gulp-util/index.d.ts" />
 /// <reference path="globals/gulp/index.d.ts" />

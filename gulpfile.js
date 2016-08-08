@@ -27,23 +27,25 @@ const config = {
             'node_modules'
         ]
     },
-    nodemonjs: {
-        script: 'build/clean/index.js',
-        ext: 'js ts',
-        // tasks: ['build'],
-        ignore: [
-            // 'build/clean/',
-            'doc/',
-            'node_modules/',
-            'test/',
-            'typings/',
-            'source/',
-            'gulpfile.js'
-        ],
-        exclude: [
-            'node_modules',
-            'typings'
-        ]
+    nodemonjs: (scriptName) => {
+        return {
+            script: 'build/clean/' + scriptName + '.js',
+            ext: 'js ts',
+            // tasks: ['build'],
+            ignore: [
+                // 'build/clean/',
+                'doc/',
+                'node_modules/',
+                'test/',
+                'typings/',
+                'source/',
+                'gulpfile.js'
+            ],
+            exclude: [
+                'node_modules',
+                'typings'
+            ]
+        }
     },
     webpack: {
         watch: true,
@@ -111,14 +113,15 @@ const config = {
 gulp.task('build', function() {
     let tsproject = ts.createProject(config.ts.tsconf, config.ts.config);
     return gulp
-        .src(['./source/index.ts', './source/*.ts'])
+        .src(['./source/index.ts', './source/**/*.ts'])
         .pipe(cache('ts'))
         .pipe(ts(tsproject)).js
 
     // .pipe(webpackGulp(config.webpack))
     // .pipe(babel(config.babel))
-    // .pipe(concat(config.concat))
+
         .pipe(remember('ts'))
+        // .pipe(concat(config.concat))
         .pipe(gulp.dest(config.build))
 })
 gulp.task('watch', ['build'], function() {
@@ -127,8 +130,31 @@ gulp.task('watch', ['build'], function() {
     //     // .pipe(ts(tsproject))
     //     // .pipe(babel(config.babel))
     //     .pipe(nodemon(config.nodemon));
-    gulp.watch('./source/**.*ts', ['build']);
-    return nodemon(config.nodemonjs);
+    gulp.watch('./source/**/*.*ts', ['build']);
+    return nodemon(config.nodemonjs('index'));
 });
+var typedoc = require("gulp-typedoc");
 
+gulp.task("typedoc", function() {
+    return gulp
+        .src(["source/*.ts"])
+        .pipe(typedoc({
+            // TypeScript options (see typescript docs)
+            module: "commonjs",
+            target: "es5",
+            includeDeclarations: true,
+
+            // Output options (see typedoc docs)
+            out: "./doc",
+            json: "index.json",
+
+            // TypeDoc options (see typedoc docs)
+            name: "gulp-gate",
+            ignoreCompilerErrors: true,
+            version: true,
+        }));
+});
+gulp.task('tests', function() {
+    return nodemon(config.nodemonjs('tests'));
+})
 gulp.task('default', ['watch']);
