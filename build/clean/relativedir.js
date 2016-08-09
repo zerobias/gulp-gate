@@ -1,11 +1,10 @@
 "use strict";
 /// <reference path="../typings/index.d.ts" />
-var util = require('./util');
+const util = require('./util');
 util.initPrint('relativedir');
-var RDir = (function () {
-    function RDir() {
+class RDir {
+    constructor() {
         console.log('RDir created');
     }
-    return RDir;
-}());
+}
 exports.RDir = RDir;

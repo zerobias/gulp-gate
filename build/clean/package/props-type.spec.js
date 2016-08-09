@@ -1,10 +1,10 @@
 "use strict";
 /// <reference path="../../typings/index.d.ts" />
-var test = require('tape');
-var tested = require('./props-type');
-test('propsType', function (assert) {
-    var props = ['name', 'dir', 'pipe'];
-    var src = {
+const test = require('tape');
+const tested = require('./props-type');
+test('propsType', (assert) => {
+    const props = ['name', 'dir', 'pipe'];
+    const src = {
         t1: {
             name: 'aaa',
             dir: 'none',
@@ -17,10 +17,10 @@ test('propsType', function (assert) {
             pipe: 0
         }
     };
-    var isString = tested.propsType([String]);
-    var isObjOrNumber = tested.propsType([Object, Number]);
-    var propsTest = isString(props);
-    var objTest = isObjOrNumber(props);
+    const isString = tested.propsType([String]);
+    const isObjOrNumber = tested.propsType([Object, Number]);
+    const propsTest = isString(props);
+    const objTest = isObjOrNumber(props);
     assert.ok(propsTest(src.t1), 't1 has all string props');
     assert.notOk(propsTest(src.t2), 't2 hasnt any string props');
     assert.notOk(propsTest(src.t3), 't3 hasnt proper types of props');

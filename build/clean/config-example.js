@@ -1,16 +1,16 @@
 "use strict";
 /// <reference path="../typings/index.d.ts" />
-var path = require('path');
-var gulp = require('gulp');
-var plumber = require('gulp-plumber');
-var cache = require('gulp-cached');
-var remember = require('gulp-remember');
-var sourcemaps = require('gulp-sourcemaps');
-var stylus = require('gulp-stylus');
-var cssnano = require('gulp-cssnano');
-var concat = require('gulp-concat');
+const path = require('path');
+const gulp = require('gulp');
+const plumber = require('gulp-plumber');
+const cache = require('gulp-cached');
+const remember = require('gulp-remember');
+const sourcemaps = require('gulp-sourcemaps');
+const stylus = require('gulp-stylus');
+const cssnano = require('gulp-cssnano');
+const concat = require('gulp-concat');
 // const nib = require('nib');
-var sample = {
+const sample = {
     source: {
         client: {
             stylus: {

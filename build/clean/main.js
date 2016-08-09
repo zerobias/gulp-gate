@@ -4,7 +4,7 @@
 // import { RDir } from './relativedir';
 // const RDir = require('./relativedir.ts');
 // const util = require('./util.ts');
-var util = require('./util');
+const util = require('./util');
 util.initPrint('main');
 // const cssnano = require('gulp-cssnano');
 // import * as stylus from 'gulp-stylus';
