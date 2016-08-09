@@ -127,6 +127,7 @@ console.log(withNames);
 console.log(styl.name);
 console.log(styl.dir);
 console.log(styl.taskOpts);
+console.log(styl.pipes);
 // console.log(inspector.validate(ResultConfigCheck.sanit,source));
 
 export default {};

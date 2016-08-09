@@ -53,6 +53,7 @@
     "ntypescript": "^1.201608080007.1",
     "orchestrator": "^0.3.7",
     "postcss-loader": "^0.9.1",
+    "q": "^1.4.1",
     "ramda": "^0.22.0",
     "schema-inspector": "^1.6.5",
     "source-map": "^0.5.6",

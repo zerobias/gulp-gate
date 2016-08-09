@@ -2,6 +2,7 @@
 /// <reference path="../typings/index.d.ts" />
 const R = require('ramda');
 const path = require('path');
+const gulpUtil = require('gulp-util');
 const inspector = require('schema-inspector');
 class TaskPreproc {
     static Morph(data) {
@@ -9,6 +10,7 @@ class TaskPreproc {
         data.task.filemask = TaskPreproc.FilemaskFabric(data);
         data.task.dir = TaskPreproc.DirFabric(data);
         data.task.taskOpts = TaskPreproc.TaskOptsFabric(data);
+        data.task.pipes = TaskPreproc.PipesFabric(data);
     }
     ;
     static NameFabric(data) {
@@ -60,6 +62,57 @@ class TaskPreproc {
             }
         };
         return inspector.sanitize(schema, R.propOr({}, 'taskOpts', data.obj)).data;
+    }
+}
+TaskPreproc.PipesFabric = (data) => PipeFactory.BatchFabric(data);
+class PipeFactory {
+    static BatchFabric(data) {
+        let obj = data.defpath(['pipe'])(data.obj);
+        return R.pipe(R.when(R.or(R.map(R.is, [String, Object])), R.of), R.ifElse(R.is(Array), R.map(PipeFactory.Fabric), _obj => console.error(`Wrong type of ${_obj}`)))(obj);
+    }
+    static Fabric(pipe) {
+        console.log('Fabric');
+        switch (typeof pipe) {
+            case 'string': return PipeFactory.FabricString(pipe);
+            case 'object': return PipeFactory.FabricObject(pipe);
+            default: return PipeFactory.FabricNoop();
+        }
+    }
+    static FabricObject(pipe) {
+        const isValidPipe = (obj) => inspector.validate({
+            type: 'array',
+            items: {
+                type: 'object',
+                optional: false,
+                properties: {
+                    loader: { type: ['function', 'string'], optional: false },
+                    opts: { type: 'any', optional: true }
+                }
+            },
+            optional: false
+        }, obj).valid;
+        if (isValidPipe(pipe))
+            return pipe;
+        let keys = R.keys(pipe);
+        return R.ifElse(R.pipe(R.keys, R.length, R.equals(1)), PipeFactory.FabricKeypair, PipeFactory.FabricNoop)(pipe);
+    }
+    static FabricKeypair(pipe) {
+        return R.pipe(R.toPairs, R.head, R.apply(PipeFactory.Pipe))(pipe);
+    }
+    static FabricNoop() {
+        console.log('FabricNoop');
+        return PipeFactory.Pipe(gulpUtil.noop, []);
+    }
+    static FabricString(pipe) {
+        console.log('FabricString');
+        const requireString = (str) => ['gulp', str].join('-');
+        return PipeFactory.Pipe(require(requireString(pipe)), []);
+    }
+    static Pipe(loader, opts) {
+        return {
+            loader: loader,
+            opts: opts
+        };
     }
 }
 class FullTask {

@@ -110,5 +110,6 @@ console.log(withNames);
 console.log(styl.name);
 console.log(styl.dir);
 console.log(styl.taskOpts);
+console.log(styl.pipes);
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = {};
