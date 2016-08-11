@@ -44,7 +44,9 @@ class Pipe {
     }
     static FabricKeypair(pipe) {
         debugPrintFabric('Keypair');
-        return R.apply(Pipe.Pipe, R.toPairs(pipe)[0]);
+        let pair = R.toPairs(pipe)[0];
+        let getLoader = loader_1.Loader.require(pair[0]);
+        return Pipe.Pipe(getLoader, pair[1]);
     }
     static FabricNoop() {
         debugPrintFabric('Noop');
@@ -52,25 +54,13 @@ class Pipe {
     }
     static FabricString(pipe) {
         debugPrintFabric('String');
-        log.debug(pipe);
-        return Pipe.Pipe(pipe, []);
+        log.debug(loader_1.Loader.require(pipe));
+        return Pipe.Pipe(loader_1.Loader.require(pipe), []);
     }
     static Pipe(loader, opts) {
         debugPrintFabric('Pipe');
-        let _loader = null;
-        if (!R.is(String, loader)) {
-            try {
-                _loader = loader_1.Loader.require(loader);
-            }
-            catch (e) {
-                log.error(`Fabric pipe error! loader ${loader} ${e.name} ${e.message}`);
-            }
-        }
-        else {
-            _loader = loader;
-        }
         return {
-            loader: _loader,
+            loader: loader,
             opts: Pipe.isntArray(opts)
         };
     }

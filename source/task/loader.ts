@@ -6,10 +6,10 @@ import * as util    from 'gulp-util';
 import { Logger } from '../logger'
 const log = Logger.initPrint('loader')
 
-type TLoader = Function|String|void
+type TLoader = Function|String|void|Object
 
 class Loader {
-    static require(_loader:TLoader) {
+    static require(_loader:TLoader):Function {
         return Loader.tryCatchRequire(_loader,
             R.when(
                 R.is(String),
@@ -25,7 +25,7 @@ class Loader {
         }
         return req
     }
-    
+
     private static resolveString(_loader:string) {
         const prependWord = add=>str=>R.pipe(R.of,R.prepend(add),R.join('-'))(str)
         const isWithPrefix = R.ifElse(
@@ -37,7 +37,16 @@ class Loader {
         let resolved = Loader.syncLoad(isWithPrefix(_loader))
         return R.ifElse(R.isNil,()=>util.noop,require)(resolved)
     }
-    private static asyncLoad(moduleName:string) {
+    /**
+     * 
+     * 
+     * @private
+     * @static
+     * @param {string} moduleName
+     * @returns {string}
+     * @description currently not used method for async module string resolving
+     */
+    private static asyncLoad(moduleName:string):string {
         const asyncCallback = function (err, res) {
             if (err) console.error(err)
             else log.tags(['async load info']).info(res)

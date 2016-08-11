@@ -18,6 +18,14 @@ test('Loader.require should return Function from "^gulp-stylus"', (assert) => {
     assert.notEqual(tested, util.noop, 'not return gulp-util.noop');
     assert.end();
 });
+test('Loader.require should return Function from "^!gulp-stylus"', (assert) => {
+    const source = '^!gulp-stylus';
+    let tested = loader_1.Loader.require(source);
+    assert.ok(R.is(Function, tested), 'tested is function');
+    assert.notEqual(tested, require('gulp-stylus'), 'not return gulp-stylus');
+    assert.equal(tested, util.noop, 'return gulp-util.noop');
+    assert.end();
+});
 test('Loader.require should return Function from "stylus!"', (assert) => {
     const source = 'stylus!';
     let tested = loader_1.Loader.require(source);

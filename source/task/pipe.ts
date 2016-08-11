@@ -62,8 +62,8 @@ class Pipe {
                     (e:IPipe)=>Pipe.Pipe(
                         Loader.require(e.loader),
                         e.opts)
-                ))(_pipe);
-        let keys = R.keys(pipe);
+                ))(_pipe)
+        let keys = R.keys(pipe)
         log.tags(['pipe','keys','values']).log(`---------keys length ${keys.length} ${keys} ${R.values(pipe)}`)
         return R.cond([
             [R.pipe(R.keys,R.length,R.equals(1)),Pipe.FabricKeypair],
@@ -73,36 +73,28 @@ class Pipe {
         ])(pipe)
     }
     private static FabricKeypair(pipe):IPipe {
-        debugPrintFabric('Keypair');
-        return R.apply(Pipe.Pipe,R.toPairs(pipe)[0]);
+        debugPrintFabric('Keypair')
+        let pair = R.toPairs(pipe)[0]
+        let getLoader = Loader.require(pair[0])
+        return Pipe.Pipe(getLoader,pair[1])
     }
     private static FabricNoop():IPipe {
-        debugPrintFabric('Noop');
-        return Pipe.Pipe(gulpUtil.noop,[]);
+        debugPrintFabric('Noop')
+        return Pipe.Pipe(gulpUtil.noop,[])
     }
     private static FabricString(pipe:string):IPipe {
-        debugPrintFabric('String');
-        log.debug(pipe);
-        return Pipe.Pipe(pipe,[]);
+        debugPrintFabric('String')
+        log.debug(Loader.require(pipe))
+        return Pipe.Pipe(Loader.require(pipe),[])
     }
     private static Pipe(loader:TLoader,opts:any):IPipe {
-        debugPrintFabric('Pipe');
-        let _loader = null;
-        if (!R.is(String,loader)) {
-            try {
-                _loader = Loader.require(loader);
-            } catch (e) {
-                log.error(`Fabric pipe error! loader ${loader} ${e.name} ${e.message}`)
-            }
-        } else {
-            _loader = loader;
-        }
+        debugPrintFabric('Pipe')
         return {
-            loader:_loader,
+            loader:loader,
             opts:Pipe.isntArray(opts)
         }
     }
 }
 
-export { Pipe };
-export { IPipe };
+export { Pipe }
+export { IPipe }
