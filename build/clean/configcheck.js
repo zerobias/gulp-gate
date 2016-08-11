@@ -8,7 +8,6 @@ const gulp = require('gulp');
 const logger_1 = require('./logger');
 const log = logger_1.Logger.initPrint('config check');
 const source = config_example_1.sample.source;
-const result = config_example_1.sample.result;
 const propsCheck = Prop.propsType;
 class ResultConfigCheck {
 }

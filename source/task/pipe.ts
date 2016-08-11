@@ -57,7 +57,7 @@ class Pipe {
                     R.is(Function),
                     l => pipable.pipe(R.apply(l,pipe.opts))
                 )(pipe.loader)
-    private static FabricArray(pipe:Object[]):IPipe[]{
+    private static FabricArray(pipe:Object[]):IPipe[] {
         debugPrintFabric('Array')
         return R.map(Pipe.FabricObject,pipe)
     }
@@ -84,7 +84,7 @@ class Pipe {
             [R.T,Pipe.FabricNoop]
         ])(pipe)
     }
-    private static FabricKeypair(pipe):IPipe {
+    private static FabricKeypair(pipe:R.KeyValuePair<string,any>):IPipe {
         debugPrintFabric('Keypair')
         let pair = R.toPairs(pipe)[0]
         let getLoader = Loader.require(pair[0])

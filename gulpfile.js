@@ -2,14 +2,15 @@
 const gulp = require('gulp')
 const nodemon = require('gulp-nodemon')
 const path = require('path')
-const babel = require('gulp-babel')
+    // const babel = require('gulp-babel')
 const ts = require('gulp-typescript')
 const typescript = require('ntypescript')
-const concat = require('gulp-concat')
+    // const concat = require('gulp-concat')
 const plumber = require('gulp-plumber')
-const sourcemaps = require('gulp-sourcemaps')
+    // const sourcemaps = require('gulp-sourcemaps')
 const cache = require('gulp-cached')
 const remember = require('gulp-remember')
+const bump = require('gulp-bump')
     // const webpackGulp = require('gulp-webpack')
 const webpack = require('webpack')
 const config = {
@@ -112,8 +113,12 @@ const config = {
     build: path.join(process.cwd(), 'build', 'clean'),
     maps: path.join(process.cwd(), 'build', 'clean', 'maps')
 };
-
-gulp.task('build', function() {
+const npmVer = vertype => function() {
+    return gulp.src('./package.json')
+        .pipe(bump({ type: vertype }))
+        .pipe(gulp.dest('./'));
+}
+gulp.task('build', ['build:patch'], function() {
     let tsproject = ts.createProject(config.ts.tsconf, config.ts.config);
     return gulp
         .src(['./source/index.ts', './source/**/*.ts'])
@@ -128,6 +133,9 @@ gulp.task('build', function() {
         // .pipe(concat(config.concat))
         .pipe(gulp.dest(config.build))
 })
+gulp.task('build:patch', npmVer('metadata'));
+gulp.task('bump', npmVer('minor'));
+gulp.task('release', npmVer('major'));
 gulp.task('watch', ['build'], function() {
     // return gulp
     //     .src(['./source/index.ts'])

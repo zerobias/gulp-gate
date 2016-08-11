@@ -1,7 +1,7 @@
 /// <reference path="../../typings/index.d.ts" />
 import * as R from 'ramda';
 // import { sample as config } from '../config-example';
-import { F } from './../f';
+import { F } from './f';
 import * as util from './../util';
 
 util.initPrint('props type');

@@ -1,5 +1,5 @@
 /// <reference path="../typings/index.d.ts" />
-import * as R from 'ramda'
+// import * as R from 'ramda'
 const inspector = require('schema-inspector')
 // import { Map } from 'typescript'
 import { sample as config } from './config-example'
@@ -15,7 +15,7 @@ import { Logger } from './logger'
 const log = Logger.initPrint('config check')
 
 const source = config.source
-const result = config.result
+// const result = config.result
 
 const propsCheck = Prop.propsType
 

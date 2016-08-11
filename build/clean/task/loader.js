@@ -25,16 +25,6 @@ class Loader {
         let resolved = Loader.syncLoad(isWithPrefix(_loader));
         return R.ifElse(R.isNil, () => util.noop, require)(resolved);
     }
-    static asyncLoad(moduleName) {
-        const asyncCallback = function (err, res) {
-            if (err)
-                console.error(err);
-            else
-                log.tags(['async load info']).info(res);
-            return res;
-        };
-        return resolve(moduleName, { basedir: __dirname }, asyncCallback);
-    }
     static syncLoad(moduleName) {
         let _module = null;
         try {

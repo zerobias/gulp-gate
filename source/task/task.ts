@@ -33,7 +33,7 @@ interface ITaskOpts extends R.Dictionary<boolean> {
 type Filemask = string[]
 
 class TaskPreproc {
-    public static Morph(data:Task.ITaskAdapter) {
+    public static Morph(data:Task.ITaskAdapter):void {
         let task = (<IJustTask>data).task
         task.name = TaskPreproc.NameFabric(data)
         task.filemask = TaskPreproc.FilemaskFabric(data)
@@ -99,13 +99,13 @@ class FullTask {
             task:this
         }
     }
-    private static get dest() {
+    private static get dest():NodeJS.ReadWriteStream {
         return gulp.dest('./build/magic')
     }
-    private get _render() {
-        const thisRender = ()=>{
+    private get _render():NodeJS.ReadWriteStream {
+        const thisRender = ()=> {
             let pipes = PipeFactory.RenderPipeline(this.pipes)
-            gulp.task(this.name.full,function(){return pipes.pipe(FullTask.dest)})
+            gulp.task(this.name.full,function():NodeJS.ReadWriteStream {return pipes.pipe(FullTask.dest)})
             this.rendered = true
             return pipes
         }
@@ -115,10 +115,10 @@ class FullTask {
     public get uid():string {
         return this.name.full
     }
-    public render() {
+    public render():NodeJS.ReadWriteStream {
         return this._render
     }
-    public run() {
+    public run():Object {
         if (!this.rendered) this.render()
         return gulp.start([this.name.full])
     }

@@ -19,8 +19,8 @@ class Projectlist {
     }
     constructor(public list:Project[]) { }
     private rendered:boolean = false
-    private get _render() {
-        const thisRender = ()=>{
+    private get _render():Function {
+        const thisRender = ()=> {
             this.list.forEach(e => e.render())
             this.rendered = true
         }
@@ -30,7 +30,7 @@ class Projectlist {
     public render():void {
         return this._render()
     }
-    public run() {
+    public run():void {
         if (!this.rendered) this.render()
         this.list.forEach(e=>e.run())
     }
@@ -49,8 +49,8 @@ class Project {
     private rendered:boolean = false
     private static childNames = (obj:Project)=>
         R.map((e:IProject)=>e.uid)(obj.list);
-    private get _render() {
-        const thisRender = ()=>{
+    private get _render():Function {
+        const thisRender = ()=> {
             this.list.forEach(e => e.render())
             this.rendered = true
             gulp.task(this.uid,Project.childNames(this))
@@ -61,7 +61,7 @@ class Project {
     public render():void {
         return this._render()
     }
-    public run() {
+    public run():Object {
         if (!this.rendered) this.render()
         return gulp.start([this.uid])
     }

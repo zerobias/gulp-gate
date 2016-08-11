@@ -15,7 +15,7 @@ class Loader {
                 R.is(String),
                     Loader.resolveString))
     }
-    private static tryCatchRequire(_loader:TLoader,func:Function) {
+    private static tryCatchRequire<T>(_loader:TLoader,func:(e:TLoader)=>T):Function {
         let req = null
         try {
             req = func(_loader)
@@ -26,7 +26,7 @@ class Loader {
         return req
     }
 
-    private static resolveString(_loader:string) {
+    private static resolveString(_loader:string):Function {
         const prependWord = add=>str=>R.pipe(R.of,R.prepend(add),R.join('-'))(str)
         const isWithPrefix = R.ifElse(
             R.pipe(
@@ -37,23 +37,23 @@ class Loader {
         let resolved = Loader.syncLoad(isWithPrefix(_loader))
         return R.ifElse(R.isNil,()=>util.noop,require)(resolved)
     }
-    /**
-     * 
-     * 
-     * @private
-     * @static
-     * @param {string} moduleName
-     * @returns {string}
-     * @description currently not used method for async module string resolving
-     */
-    private static asyncLoad(moduleName:string):string {
-        const asyncCallback = function (err, res) {
-            if (err) console.error(err)
-            else log.tags(['async load info']).info(res)
-            return res
-        }
-        return resolve(moduleName, { basedir: __dirname }, asyncCallback)
-    }
+    // /**
+    //  * 
+    //  * 
+    //  * @private
+    //  * @static
+    //  * @param {string} moduleName
+    //  * @returns {string}
+    //  * @description currently not used method for async module string resolving
+    //  */
+    // private static asyncLoad(moduleName:string):string|void {
+    //     const asyncCallback = function (err, res) {
+    //         if (err) console.error(err)
+    //         else log.tags(['async load info']).info(res)
+    //         return res
+    //     }
+    //     return resolve(moduleName, { basedir: __dirname }, asyncCallback)
+    // }
 
     private static syncLoad(moduleName:string):string {
         let _module = null
