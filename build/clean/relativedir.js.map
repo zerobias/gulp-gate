@@ -1,0 +1,1 @@
+{"version":3,"names":[],"mappings":"","sources":["relativedir.js"],"sourcesContent":["\"use strict\";\nconst util = require('./util');\nutil.initPrint('relativedir');\nclass RDir {\n    constructor() {\n        console.log('RDir created');\n    }\n}\nexports.RDir = RDir;\n"],"file":"relativedir.js","sourceRoot":"/source/"}

@@ -1,15 +1,17 @@
 /// <reference path="typings/index.d.ts" />
-const gulp = require('gulp');
-const nodemon = require('gulp-nodemon');
-const path = require('path');
-const babel = require('gulp-babel');
-const ts = require('gulp-typescript');
-const typescript = require('ntypescript');
-const concat = require('gulp-concat');
-const cache = require('gulp-cached');
-const remember = require('gulp-remember');
-// const webpackGulp = require('gulp-webpack');
-const webpack = require('webpack');
+const gulp = require('gulp')
+const nodemon = require('gulp-nodemon')
+const path = require('path')
+const babel = require('gulp-babel')
+const ts = require('gulp-typescript')
+const typescript = require('ntypescript')
+const concat = require('gulp-concat')
+const plumber = require('gulp-plumber')
+const sourcemaps = require('gulp-sourcemaps')
+const cache = require('gulp-cached')
+const remember = require('gulp-remember')
+    // const webpackGulp = require('gulp-webpack')
+const webpack = require('webpack')
 const config = {
     nodemon: {
         script: 'source/index.ts',
@@ -107,19 +109,21 @@ const config = {
         }
     },
     concat: 'index.js',
-    build: path.join(process.cwd(), 'build', 'clean')
+    build: path.join(process.cwd(), 'build', 'clean'),
+    maps: path.join(process.cwd(), 'build', 'clean', 'maps')
 };
 
 gulp.task('build', function() {
     let tsproject = ts.createProject(config.ts.tsconf, config.ts.config);
     return gulp
         .src(['./source/index.ts', './source/**/*.ts'])
+        .pipe(plumber())
         .pipe(cache('ts'))
         .pipe(ts(tsproject)).js
-
-    // .pipe(webpackGulp(config.webpack))
-    // .pipe(babel(config.babel))
-
+        // .pipe(sourcemaps.init())
+        // .pipe(webpackGulp(config.webpack))
+        // .pipe(babel(config.babel))
+        // .pipe(sourcemaps.write('.'))
         .pipe(remember('ts'))
         // .pipe(concat(config.concat))
         .pipe(gulp.dest(config.build))
@@ -141,8 +145,8 @@ gulp.task("typedoc", function() {
         .pipe(typedoc({
             // TypeScript options (see typescript docs)
             module: "commonjs",
-            target: "es6",
-            includeDeclarations: true,
+            target: "es2015",
+            includeDeclarations: false,
 
             // Output options (see typedoc docs)
             out: "./doc",

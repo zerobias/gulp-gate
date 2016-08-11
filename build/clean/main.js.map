@@ -1,0 +1,1 @@
+{"version":3,"names":[],"mappings":"","sources":["main.js"],"sourcesContent":["\"use strict\";\nconst util = require('./util');\nutil.initPrint('main');\nrequire('./configcheck');\nObject.defineProperty(exports, \"__esModule\", { value: true });\nexports.default = {};\n"],"file":"main.js","sourceRoot":"/source/"}

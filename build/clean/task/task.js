@@ -1,4 +1,5 @@
 "use strict";
+const gulp = require('gulp');
 const R = require('ramda');
 const path = require('path');
 const pipe_1 = require('./pipe');
@@ -13,7 +14,6 @@ class TaskPreproc {
         task.taskOpts = TaskPreproc.TaskOptsFabric(data);
         task.pipes = TaskPreproc.PipesFabric(data);
     }
-    ;
     static NameFabric(data) {
         const makeFullName = (subname, taskname) => [subname, taskname].join(':');
         return {
@@ -21,7 +21,6 @@ class TaskPreproc {
             full: makeFullName(data.subname, data.taskname)
         };
     }
-    ;
     static pathMaker(dirs) {
         return R.pipe(R.prepend(process.cwd()), R.apply(path.join))(dirs);
     }
@@ -56,6 +55,7 @@ class FullTask {
         this.subname = subname;
         this.taskname = taskname;
         this.obj = obj;
+        this.rendered = false;
         TaskPreproc.Morph(this.Adapter);
     }
     get Adapter() {
@@ -66,6 +66,30 @@ class FullTask {
             defpath: R.pathOr(this.taskname),
             task: this
         };
+    }
+    static get dest() {
+        return gulp.dest('./build/magic');
+    }
+    get _render() {
+        const thisRender = () => {
+            let pipes = pipe_1.Pipe.RenderPipeline(this.pipes);
+            gulp.task(this.name.full, function () { return pipes.pipe(FullTask.dest); });
+            this.rendered = true;
+            return pipes;
+        };
+        const onceRender = R.once(thisRender);
+        return onceRender();
+    }
+    get uid() {
+        return this.name.full;
+    }
+    render() {
+        return this._render;
+    }
+    run() {
+        if (!this.rendered)
+            this.render();
+        return gulp.start([this.name.full]);
     }
 }
 exports.FullTask = FullTask;

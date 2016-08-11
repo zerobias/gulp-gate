@@ -1,0 +1,1 @@
+{"version":3,"names":[],"mappings":"","sources":["tests.js"],"sourcesContent":["\"use strict\";\nrequire('./task/loader.spec');\nObject.defineProperty(exports, \"__esModule\", { value: true });\nexports.default = {};\n"],"file":"tests.js","sourceRoot":"/source/"}

@@ -3,7 +3,7 @@ import * as R       from 'ramda'
 import * as resolve from 'resolve'
 import * as util    from 'gulp-util';
 
-import { Logger } from '../logger'
+import { Logger }   from '../logger'
 const log = Logger.initPrint('loader')
 
 type TLoader = Function|String|void|Object
