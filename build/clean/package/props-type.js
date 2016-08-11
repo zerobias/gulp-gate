@@ -1,7 +1,5 @@
 "use strict";
-/// <reference path="../../typings/index.d.ts" />
 const R = require('ramda');
-// import { sample as config } from '../config-example';
 const f_1 = require('./../f');
 const util = require('./../util');
 util.initPrint('props type');

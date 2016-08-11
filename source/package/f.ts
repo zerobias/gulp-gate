@@ -1,4 +1,4 @@
-/// <reference path="../typings/index.d.ts" />
+/// <reference path="../../typings/index.d.ts" />
 import * as R from 'ramda';
 type ApplyFunc<U> = <T>(param:T)=>U;
 

@@ -13,6 +13,7 @@
 /// <reference path="globals/gulp/index.d.ts" />
 /// <reference path="globals/orchestrator/index.d.ts" />
 /// <reference path="globals/q/index.d.ts" />
+/// <reference path="globals/resolve/index.d.ts" />
 /// <reference path="globals/source-map/index.d.ts" />
 /// <reference path="globals/tape/index.d.ts" />
 /// <reference path="globals/through2/index.d.ts" />

@@ -1,5 +1,4 @@
 "use strict";
-/// <reference path="../typings/index.d.ts" />
 const test = require('tape');
 const R = require('ramda');
 const config_example_1 = require('./config-example');
@@ -17,12 +16,7 @@ test('Assertions with tape.', (assert) => {
 });
 test('Result should have these props', (assert) => {
     const props = ['name', 'dir', 'taskOpts', 'pipe'];
-    // const passing = util.propsAreObjects(props);
-    // assert.ok(passing,'passing is real');
-    // assert.ok(R.is(Function,passing),'passing is function');
     assert.ok(R.is(Object, result), 'result is object');
-    // assert.ok(passing(result),'result have all props');
-    // console.log(passing);
     assert.end();
 });
 Object.defineProperty(exports, "__esModule", { value: true });

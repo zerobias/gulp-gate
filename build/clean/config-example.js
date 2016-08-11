@@ -1,5 +1,4 @@
 "use strict";
-/// <reference path="../typings/index.d.ts" />
 const path = require('path');
 const gulp = require('gulp');
 const plumber = require('gulp-plumber');
@@ -9,7 +8,6 @@ const sourcemaps = require('gulp-sourcemaps');
 const stylus = require('gulp-stylus');
 const cssnano = require('gulp-cssnano');
 const concat = require('gulp-concat');
-// const nib = require('nib');
 const sample = {
     source: {
         client: {
@@ -34,7 +32,7 @@ const sample = {
                     {
                         loader: 'stylus',
                         opts: {
-                            use: [] // nib()
+                            use: []
                         }
                     },
                     'cssnano',
@@ -77,7 +75,7 @@ const sample = {
             },
             {
                 loader: stylus,
-                opts: { use: [] } // nib()
+                opts: { use: [] }
             },
             {
                 loader: cssnano,

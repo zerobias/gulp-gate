@@ -1,32 +1,35 @@
 /// <reference path="../typings/index.d.ts" />
-import * as R from 'ramda';
-const inspector = require('schema-inspector');
-import * as util from './util';
-util.initPrint('config check');
-import { Map } from 'typescript';
-import { sample as config } from './config-example';
-import { FullTask } from './task';
+import * as R from 'ramda'
+const inspector = require('schema-inspector')
+import { Map } from 'typescript'
+import { sample as config } from './config-example'
+import { FullTask } from './task/task'
 
-import * as Prop from './package/props-type';
+import * as Prop from './package/props-type'
 
-const source = config.source;
-const result = config.result;
+import * as gulp from 'gulp'
 
-const propsCheck = Prop.propsType;
+import { Logger } from './logger'
+const log = Logger.initPrint('config check')
+
+const source = config.source
+const result = config.result
+
+const propsCheck = Prop.propsType
 
 class ValidHelper {
-    public static NoEmptyString = { type: 'string', minLength: 1 , optional: false};
-    public static Bool = { type: 'boolean', optional: false};
+    public static NoEmptyString = { type: 'string', minLength: 1 , optional: false}
+    public static Bool = { type: 'boolean', optional: false}
     public static pairToName(arr:[String,Object]):Object {
-        return R.set(R.lensProp('name'),arr[0],arr[1]);
+        return R.set(R.lensProp('name'),arr[0],arr[1])
     }
 }
 
 class ResultConfigCheck {
-    private static stringCheck = propsCheck([String]);
-    private static arrObjCheck = propsCheck([Array, Object]);
+    private static stringCheck = propsCheck([String])
+    private static arrObjCheck = propsCheck([Array, Object])
     public static resultTabs = (obj: Object) =>
-        ResultConfigCheck.arrObjCheck(['dir', 'taskOpts', 'name', 'pipe'])(obj);
+        ResultConfigCheck.arrObjCheck(['dir', 'taskOpts', 'name', 'pipe'])(obj)
     public static ResultCheck = {
         name: ResultConfigCheck.stringCheck([''])
     }
@@ -73,11 +76,11 @@ class ResultConfigCheck {
             }
         }
     }
-    public static validate = (obj:Object):boolean=>inspector.validate(ResultConfigCheck.sanit,obj).valid;
+    public static validate = (obj:Object):boolean=>inspector.validate(ResultConfigCheck.sanit,obj).valid
 }
-type Task = R.Dictionary<Object|String|Array<any>|Number>;
-type Subproject = Map<Task>;
-type Project = Map<Subproject>;
+type Task = R.Dictionary<Object|String|Array<any>|Number>
+type Subproject = Map<Task>
+type Project = Map<Subproject>
 class SourceConfig {
     private static sanit = {
         type: 'object',
@@ -88,14 +91,14 @@ class SourceConfig {
         }
     }
     public static splitProjects(obj:Object) {
-        let projectMap:Map<any> = new Map<any>();
-        R.forEach(e=>projectMap.set(e[0],SourceConfig.childMap(e[1])),R.toPairs(obj));
-        return projectMap;
+        let projectMap:Map<any> = new Map<any>()
+        R.forEach(e=>projectMap.set(e[0],SourceConfig.childMap(e[1])),R.toPairs(obj))
+        return projectMap
     }
     private static childMap(obj:Object) {
-        let childMap = new Map<Object>();
-        R.forEach(e=>childMap.set(e[0],e[1]),R.toPairs(obj));
-        return childMap;
+        let childMap = new Map<Object>()
+        R.forEach(e=>childMap.set(e[0],e[1]),R.toPairs(obj))
+        return childMap
     }
     public static onEveryTask<T>(project:Project,func:(subname:string,taskname:string,obj:Object)=>T):Project {
         let result = new Map<Object>();
@@ -123,11 +126,24 @@ let withNames = SourceConfig.onEveryTask(projectSplit,SourceConfig.ConstructTask
 let styl = withNames.get('client').get('stylus');
 // console.log(ResultConfigCheck.validate(result));
 // console.log(projectSplit);
-console.log(withNames);
-console.log(styl.name);
-console.log(styl.dir);
-console.log(styl.taskOpts);
-console.log(styl.pipes);
+// console.log(withNames);
+// console.log(styl.name);
+// console.log(styl.dir);
+// console.log(styl.taskOpts);
+log.tags(['styl object','pipes']).debug(styl.pipes);
+const renderPipe =
+    loader=>
+        pipable=>
+            R.when(
+                R.is(Function),
+                l => pipable.pipe(R.apply(l,loader.opts)))
+                    (loader.loader);
+const renderPipeline = (pipes:any[])=>R.reduce((acc,e)=>e(acc),gulp.src('./source/*.styl'),R.map(renderPipe,pipes));
+let pipeline = renderPipeline(styl.pipes);
+log.log(pipeline);
+gulp.task('test',function(){return pipeline.pipe(gulp.dest('./build/magic'))});
+gulp.start(['test'])
+log.log(gulp.hasTask('test'));
 // console.log(inspector.validate(ResultConfigCheck.sanit,source));
 
 export default {};

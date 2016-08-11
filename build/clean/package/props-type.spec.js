@@ -1,5 +1,4 @@
 "use strict";
-/// <reference path="../../typings/index.d.ts" />
 const test = require('tape');
 const tested = require('./props-type');
 test('propsType', (assert) => {

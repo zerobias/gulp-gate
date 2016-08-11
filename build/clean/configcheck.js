@@ -1,12 +1,12 @@
 "use strict";
-/// <reference path="../typings/index.d.ts" />
 const R = require('ramda');
 const inspector = require('schema-inspector');
-const util = require('./util');
-util.initPrint('config check');
 const config_example_1 = require('./config-example');
-const task_1 = require('./task');
+const task_1 = require('./task/task');
 const Prop = require('./package/props-type');
+const gulp = require('gulp');
+const logger_1 = require('./logger');
+const log = logger_1.Logger.initPrint('config check');
 const source = config_example_1.sample.source;
 const result = config_example_1.sample.result;
 const propsCheck = Prop.propsType;
@@ -104,12 +104,13 @@ SourceConfig.ConstructTask = (subname, taskname, obj) => R.constructN(3, task_1.
 let projectSplit = SourceConfig.splitProjects(source);
 let withNames = SourceConfig.onEveryTask(projectSplit, SourceConfig.ConstructTask);
 let styl = withNames.get('client').get('stylus');
-// console.log(ResultConfigCheck.validate(result));
-// console.log(projectSplit);
-console.log(withNames);
-console.log(styl.name);
-console.log(styl.dir);
-console.log(styl.taskOpts);
-console.log(styl.pipes);
+log.tags(['styl object', 'pipes']).debug(styl.pipes);
+const renderPipe = loader => pipable => R.when(R.is(Function), l => pipable.pipe(R.apply(l, loader.opts)))(loader.loader);
+const renderPipeline = (pipes) => R.reduce((acc, e) => e(acc), gulp.src('./source/*.styl'), R.map(renderPipe, pipes));
+let pipeline = renderPipeline(styl.pipes);
+log.log(pipeline);
+gulp.task('test', function () { return pipeline.pipe(gulp.dest('./build/magic')); });
+gulp.start(['test']);
+log.log(gulp.hasTask('test'));
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = {};

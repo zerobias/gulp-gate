@@ -1,5 +1,4 @@
 "use strict";
-/// <reference path="../typings/index.d.ts" />
 const util = require('./util');
 util.initPrint('relativedir');
 class RDir {

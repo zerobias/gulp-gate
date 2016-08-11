@@ -1,5 +1,4 @@
 "use strict";
-require('./package/props-type.spec');
-require('./config-example.spec');
+require('./task/loader.spec');
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = {};
