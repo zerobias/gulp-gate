@@ -4,8 +4,9 @@
     "description": "Neat project tasks interface",
     "main": "source/index.ts",
     "scripts": {
-        "test": "node-tape ./test/index.js | faucet",
-        "start": "ts-node source/index.ts"
+        "test": "node ./build/clean/tests.js",
+        "start": "node ./build/clean/index.js",
+        "preinstall": "gulp build"
     },
     "keywords": [
         "gulp",
