@@ -1,4 +1,5 @@
 /// <reference path="typings/index.d.ts" />
+"use strict"
 const gulp = require('gulp')
 const nodemon = require('gulp-nodemon')
 const path = require('path')
