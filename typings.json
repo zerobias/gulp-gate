@@ -1,33 +1,39 @@
 {
-  "globalDependencies": {
-    "gulp": "registry:dt/gulp#3.8.0+20160724062653",
-    "gulp-cached": "registry:dt/gulp-cached#0.0.0+20160316155526",
-    "gulp-concat": "registry:dt/gulp-concat#0.0.0+20160316155526",
-    "gulp-nodemon": "registry:dt/gulp-nodemon#0.0.0+20160316155526",
-    "gulp-plumber": "registry:dt/gulp-plumber#0.0.0+20160316155526",
-    "gulp-remember": "registry:dt/gulp-remember#0.0.0+20160316155526",
-    "gulp-sourcemaps": "registry:dt/gulp-sourcemaps#0.0.0+20160316155526",
-    "gulp-util": "registry:dt/gulp-util#0.0.0+20160316155526",
-    "resolve": "registry:dt/resolve#0.0.0+20160620212904"
-  },
-  "globalDevDependencies": {
-    "chalk": "registry:dt/chalk#0.4.0+20160317120654",
-    "gulp-babel": "registry:dt/gulp-babel#6.1.0+20160316171810",
-    "gulp-concat": "registry:dt/gulp-concat#0.0.0+20160316155526",
-    "gulp-tslint": "registry:dt/gulp-tslint#3.6.0+20160316155526",
-    "gulp-typedoc": "registry:dt/gulp-typedoc#0.0.0+20160316155526",
-    "gulp-typescript": "registry:dt/gulp-typescript#0.0.0+20160317120654",
-    "orchestrator": "registry:dt/orchestrator#0.0.0+20160316155526",
-    "q": "registry:dt/q#0.0.0+20160613154756",
-    "source-map": "registry:dt/source-map#0.0.0+20160317120654",
-    "tape": "registry:dt/tape#4.2.2+20160317120654",
-    "through2": "registry:dt/through2#2.0.0+20160317120654",
-    "typescript": "registry:dt/typescript#0.4.0+20160317120654",
-    "uglify-js": "registry:dt/uglify-js#2.6.1+20160316155526",
-    "vinyl": "registry:dt/vinyl#1.1.0+20160316155526",
-    "webpack": "registry:dt/webpack#1.12.9+20160724112410"
-  },
-  "dependencies": {
-    "ramda": "registry:npm/ramda#0.21.0+20160531162943"
-  }
+    "globalDependencies": {
+        "gulp": "registry:dt/gulp#3.8.0+20160724062653",
+        "gulp-cached": "registry:dt/gulp-cached#0.0.0+20160316155526",
+        "gulp-concat": "registry:dt/gulp-concat#0.0.0+20160316155526",
+        "gulp-nodemon": "registry:dt/gulp-nodemon#0.0.0+20160316155526",
+        "gulp-plumber": "registry:dt/gulp-plumber#0.0.0+20160316155526",
+        "gulp-remember": "registry:dt/gulp-remember#0.0.0+20160316155526",
+        "gulp-sourcemaps": "registry:dt/gulp-sourcemaps#0.0.0+20160316155526",
+        "gulp-util": "registry:dt/gulp-util#0.0.0+20160316155526",
+        "resolve": "registry:dt/resolve#0.0.0+20160620212904",
+        "vinyl-paths": "registry:dt/vinyl-paths#0.0.0+20160316155526"
+    },
+    "globalDevDependencies": {
+        "browserify": "registry:dt/browserify#12.0.1+20160317120654",
+        "chalk": "registry:dt/chalk#0.4.0+20160317120654",
+        "gulp-babel": "registry:dt/gulp-babel#6.1.0+20160316171810",
+        "gulp-concat": "registry:dt/gulp-concat#0.0.0+20160316155526",
+        "gulp-rename": "registry:dt/gulp-rename#0.0.0+20160316155526",
+        "gulp-tslint": "registry:dt/gulp-tslint#3.6.0+20160316155526",
+        "gulp-typedoc": "registry:dt/gulp-typedoc#0.0.0+20160316155526",
+        "gulp-typescript": "registry:dt/gulp-typescript#0.0.0+20160317120654",
+        "orchestrator": "registry:dt/orchestrator#0.0.0+20160316155526",
+        "q": "registry:dt/q#0.0.0+20160613154756",
+        "redis": "registry:dt/redis#0.12.1+20160728132028",
+        "source-map": "registry:dt/source-map#0.0.0+20160317120654",
+        "tape": "registry:dt/tape#4.2.2+20160317120654",
+        "through2": "registry:dt/through2#2.0.0+20160317120654",
+        "typescript": "registry:dt/typescript#0.4.0+20160317120654",
+        "uglify-js": "registry:dt/uglify-js#2.6.1+20160316155526",
+        "vinyl": "registry:dt/vinyl#1.1.0+20160316155526",
+        "vinyl-source-stream": "registry:dt/vinyl-source-stream#0.0.0+20160316155526",
+        "webpack": "registry:dt/webpack#1.12.9+20160724112410"
+    },
+    "dependencies": {
+        "glob": "registry:npm/glob#6.0.0+20160723033700",
+        "ramda": "registry:npm/ramda#0.21.0+20160531162943"
+    }
 }

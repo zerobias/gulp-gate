@@ -2,70 +2,56 @@
 const R = require('ramda');
 const gulp = require('gulp');
 const task_1 = require('./task');
-class Projectlist {
-    constructor(list) {
-        this.list = list;
-        this.rendered = false;
-    }
-    static configSplitter(obj) {
-        const pairToTask = (pair) => R.apply(Project.configSplitter, pair);
-        const toPairs = R.toPairs(obj);
-        let tasklist = R.map(pairToTask)(toPairs);
-        return new Projectlist(tasklist);
-    }
-    get _render() {
-        const thisRender = () => {
-            this.list.forEach(e => e.render());
-            this.rendered = true;
-        };
-        const onceRender = R.once(thisRender);
-        return onceRender;
-    }
-    render() {
-        return this._render();
-    }
-    run() {
-        if (!this.rendered)
-            this.render();
-        this.list.forEach(e => e.run());
-    }
-    get(projectname) {
-        return R.find((e) => e.uid === projectname)(this.list);
-    }
+const childNames = (obj) => R.pluck('uid')(obj.list);
+class ObjectSplitter {
 }
-exports.Projectlist = Projectlist;
-class Project {
+ObjectSplitter.toPairs = R.toPairs;
+ObjectSplitter.tasklist = (construct) => R.pipe(ObjectSplitter.toPairs, R.map(construct));
+ObjectSplitter.pairToProject = (pair) => R.apply(Project.configSplitter, pair);
+ObjectSplitter.pairToTask = projectname => (pair) => new task_1.FullTask(projectname, pair[0], pair[1]);
+ObjectSplitter.splitProjectlist = (obj) => new Projectlist(ObjectSplitter.tasklist(ObjectSplitter.pairToProject)(obj));
+ObjectSplitter.splitProject = (obj, projectname) => new Project(ObjectSplitter.tasklist(ObjectSplitter.pairToTask(projectname))(obj), projectname);
+class Renderable {
     constructor(list, uid) {
         this.list = list;
         this.uid = uid;
         this.rendered = false;
     }
-    static configSplitter(projectname, obj) {
-        const pairToTask = (pair) => new task_1.FullTask(projectname, pair[0], pair[1]);
-        const toPairs = R.toPairs(obj);
-        let tasklist = R.map(pairToTask)(toPairs);
-        return new Project(tasklist, projectname);
-    }
-    get _render() {
-        const thisRender = () => {
-            this.list.forEach(e => e.render());
-            this.rendered = true;
-            gulp.task(this.uid, Project.childNames(this));
-        };
-        const onceRender = R.once(thisRender);
-        return onceRender;
-    }
     render() {
-        return this._render();
+        let self = this;
+        const thisRender = function () {
+            self.list.forEach(e => e.render());
+            self.rendered = true;
+            gulp.task(self.uid, childNames(self));
+        };
+        if (!self.rendered)
+            thisRender();
     }
     run() {
-        if (!this.rendered)
-            this.render();
+        this.render();
         return gulp.start([this.uid]);
     }
-    get(taskname) {
-        return R.find((e) => e.name.short === taskname)(this.list);
+}
+class Projectlist extends Renderable {
+    constructor(list) {
+        super(list, 'build-all');
+        this.list = list;
+    }
+    get(projectname) {
+        return R.find((e) => e.uid === projectname)(this.list);
     }
 }
-Project.childNames = (obj) => R.map((e) => e.uid)(obj.list);
+Projectlist.configSplitter = (obj) => ObjectSplitter.splitProjectlist(obj);
+exports.Projectlist = Projectlist;
+class Project extends Renderable {
+    constructor(list, uid) {
+        super(list, uid);
+        this.list = list;
+        this.uid = uid;
+    }
+    get(taskname) {
+        return (R.find((e) => e.name.short === taskname)(this.list)).UserAdapter;
+    }
+}
+Project.configSplitter = (projectname, obj) => ObjectSplitter.splitProject(obj, projectname);
 exports.Project = Project;

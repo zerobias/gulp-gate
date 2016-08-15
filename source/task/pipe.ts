@@ -6,7 +6,7 @@ import * as gulpUtil    from 'gulp-util'
 
 
 import { reflectLogger }    from '../util'
-import { isntArray }        from '../util'
+import { makeArrayIfIsnt }        from '../util'
 import { Task }             from './header'
 import { ValidatorModel }   from './validmodel'
 import { TLoader }          from './loader'
@@ -21,6 +21,8 @@ interface IPipe {
     loader:TLoader,
     opts:any[]
 }
+type Pipeline = IPipe[]
+type PipelineTransform = (line:Pipeline)=>Pipeline
 interface IPipable {
     pipe:(any:any)=>IPipable
 }
@@ -30,12 +32,12 @@ const debugPrintFabric = (name:string)=>log.tags(['fabric type']).log(`==Fabric 
 
 
 class Pipe {
-    public static RenderPipeline =
-        (pipeline:IPipe[])=>R.reduce(
+    public static RenderPipeline_deprecated =
+        (pipeline:Pipeline)=>R.reduce(
             (acc,e)=>e(acc),
             gulp.src('./source/*.styl'),
             R.map(Pipe.RenderPipe,pipeline))
-    public static BatchFabric(data:Task.ITaskAdapter):IPipe[] {
+    public static BatchFabric(data:Task.IMorphAdapter):Pipeline {
         let obj = data.defpath(['pipe'])(data.obj)
         const isArray = R.when(R.is(Array),Pipe.FabricArray)
         log.tags(['pipeFactory','batch','pipes[0]']).log(obj[0])
@@ -50,19 +52,36 @@ class Pipe {
     //         default:return Pipe.FabricNoop()
     //     }
     // }
-    private static RenderPipe =
+    public static RenderPipe =
         (pipe:IPipe)=>
             (pipable:IPipable)=>
                 R.when(
                     R.is(Function),
                     l => pipable.pipe(R.apply(l,pipe.opts))
                 )(pipe.loader)
-    private static FabricArray(pipe:Object[]):IPipe[] {
+    public static RenderFirstPipe =
+        (pipe:IPipe)=>
+            <IPipable>R.when(
+                R.is(Function),
+                l => R.apply(l,pipe.opts)
+            )(pipe.loader)
+    public static Pipe(loader:TLoader,opts:any):IPipe {
+        debugPrintFabric('Pipe')
+        return {
+            loader:loader,
+            opts:makeArrayIfIsnt(opts)
+        }
+    }
+    private static FabricArray(pipe:Object[]):Pipeline {
         debugPrintFabric('Array')
         return R.map(Pipe.FabricObject,pipe)
     }
     private static FabricObject(pipe:Object):IPipe {
         debugPrintFabric('Object')
+        let logKeys = _pipe=> {
+            let keys = R.keys(_pipe)
+            log.tags(['pipe','keys','values']).log(`---------keys length ${keys.length} ${keys} ${R.values(_pipe)}`)
+        }
         const isValidPipe = (obj:Object):boolean =>
             inspector.validate(ValidatorModel.Pipe,obj).valid
         const validPipeMaker = (_pipe:IPipe)=>
@@ -75,8 +94,7 @@ class Pipe {
                         e.opts)
                 ))(_pipe)
         const isExactlyOneKey = R.pipe(R.keys,R.length,R.equals(1))
-        let keys = R.keys(pipe)
-        log.tags(['pipe','keys','values']).log(`---------keys length ${keys.length} ${keys} ${R.values(pipe)}`)
+        logKeys(pipe)
         return R.cond([
             [isExactlyOneKey,Pipe.FabricKeypair],
             [isValidPipe,validPipeMaker],
@@ -100,14 +118,28 @@ class Pipe {
         log.debug(resolved)
         return Pipe.Pipe(resolved,[])
     }
-    private static Pipe(loader:TLoader,opts:any):IPipe {
-        debugPrintFabric('Pipe')
-        return {
-            loader:loader,
-            opts:isntArray(opts)
-        }
-    }
 }
+
+class Pipeliner {
+    public static append = (pipe:IPipe):PipelineTransform=>
+        (line:Pipeline)=>R.append(pipe,line)
+    public static prepend = (pipe:IPipe):PipelineTransform=>
+        (line:Pipeline)=>R.prepend(pipe,line)
+    public static enclose = (prepend:IPipe,append:IPipe):PipelineTransform=>
+        (line:Pipeline)=>R.pipe(Pipeliner.prepend(prepend),Pipeliner.append(append))(line)
+    public static render =
+        (line:Pipeline)=> {
+            let head = R.head(line)
+            let tail = R.tail(line)
+            return R.reduce(
+                (acc,e)=>e(acc),
+                Pipe.RenderFirstPipe(head),
+                R.map(Pipe.RenderPipe,tail))
+        }
+}
+
 
 export { Pipe }
 export { IPipe }
+export { Pipeline }
+export { Pipeliner }

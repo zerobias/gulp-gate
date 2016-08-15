@@ -1,4 +1,5 @@
 'use strict';
 require('./main');
+const public_api_1 = require('./task/public-api');
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = {};
+exports.default = public_api_1.default;

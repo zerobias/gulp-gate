@@ -1,5 +1,4 @@
-/// <reference path="../typings/index.d.ts" />
-'use strict';
-import './main';
-
-export default {};
+'use strict'
+import './main'
+import config from './task/public-api'
+export default config

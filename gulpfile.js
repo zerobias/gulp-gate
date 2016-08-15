@@ -2,137 +2,62 @@
 "use strict"
 const gulp = require('gulp')
 const nodemon = require('gulp-nodemon')
-const path = require('path')
-    // const babel = require('gulp-babel')
+    // const util = require('gulp-util')
+    // const path = require('path')
+const babel = require('gulp-babel')
 const ts = require('gulp-typescript')
-const typescript = require('ntypescript')
+    // const typescript = require('ntypescript')
     // const concat = require('gulp-concat')
 const plumber = require('gulp-plumber')
     // const sourcemaps = require('gulp-sourcemaps')
 const cache = require('gulp-cached')
 const remember = require('gulp-remember')
 const bump = require('gulp-bump')
+const rename = require('gulp-rename')
+const browserify = require('browserify')
+const vinyl = require('vinyl-source-stream')
+const minify = require('gulp-minify')
     // const webpackGulp = require('gulp-webpack')
-const webpack = require('webpack')
-const config = {
-    nodemon: {
-        script: 'source/index.ts',
-        ext: 'js ts',
-        env: { 'NODE_ENV': 'development' },
-        ignore: [
-            'build/',
-            'doc/',
-            'node_modules/',
-            'test/'
-        ],
-        'exclude': [
-            'typings/main.d.ts',
-            'typings/main',
-            'node_modules'
-        ]
-    },
-    nodemonjs: (scriptName) => {
-        return {
-            script: 'build/clean/' + scriptName + '.js',
-            ext: 'js ts',
-            // tasks: ['build'],
-            ignore: [
-                // 'build/clean/',
-                'doc/',
-                'node_modules/',
-                'test/',
-                'typings/',
-                'source/',
-                'gulpfile.js'
-            ],
-            exclude: [
-                'node_modules',
-                'typings'
-            ]
-        }
-    },
-    webpack: {
-        watch: true,
-        devtool: 'source-map',
-        useBabel: true,
-        // useCache: true,
-        entry: {
-            "app": ["./source/index.ts"],
-            "vendor": ["ramda", "bucker", "gulp", "path", "gulp-plumber", "gulp-stylus"],
-            "runtime": ["querystring", "debug", "url"]
-        },
-        resolve: {
-            extensions: ['', '.ts', '.js']
-        },
-        module: {
-            noParse: ['gulp', 'gulp-cssnano', 'path', 'beeper', 'ramda', 'gulp-stylus', 'bucker'],
-            loaders: [{
-                test: /\.styl$/,
-                loader: 'style-loader!css-loader!postcss-loader!stylus-loader'
-            }, {
-                test: /\.json$/,
-                loader: 'json-loader'
-            }, {
-                test: /\.md$/,
-                loader: 'markdown-loader'
-            }, {
-                test: /\.ts$/,
-                loader: 'awesome-typescript-loader', //'ts-loader?compiler=ntypescript'
-                exclude: /node_modules/
-            }, {
-                test: /\.js$/,
-                loader: 'babel-loader',
-                query: {
-                    plugins: ['transform-runtime'],
-                    presets: ['es2015']
-                },
-                exclude: /node_modules/
-            }],
-        },
-        output: { filename: '[name].bundle.js' },
-        node: {
-            fs: "empty"
-        },
-        plugins: [
-            new webpack.NoErrorsPlugin(),
-            new webpack.optimize.CommonsChunkPlugin("vendor", "vendor.bundle.js"),
-            new webpack.ProgressPlugin((percentage, message) => console.log(`${message} ${(percentage*100).toFixed()}%`)),
-        ]
-    },
-    babel: {
-        plugins: ['transform-runtime'],
-        presets: ['es2015']
-    },
-    ts: {
-        tsconf: path.join(process.cwd(), 'tsconfig.json'),
-        config: {
-            sortOutput: true,
-            typescript: typescript
-        }
-    },
-    concat: 'index.js',
-    build: path.join(process.cwd(), 'build', 'clean'),
-    maps: path.join(process.cwd(), 'build', 'clean', 'maps')
-};
+    // const webpack = require('webpack')
+const config = require('./gulp/config')
 const npmVer = vertype => function() {
     return gulp.src('./package.json')
         .pipe(bump({ type: vertype }))
         .pipe(gulp.dest('./'));
 }
-gulp.task('build', ['build:patch'], function() {
+gulp.task('build', function() {
     let tsproject = ts.createProject(config.ts.tsconf, config.ts.config);
     return gulp
         .src(['./source/index.ts', './source/**/*.ts'])
-        .pipe(plumber())
+        // .pipe(plumber())
         .pipe(cache('ts'))
         .pipe(ts(tsproject)).js
         // .pipe(sourcemaps.init())
         // .pipe(webpackGulp(config.webpack))
-        // .pipe(babel(config.babel))
+        // 
         // .pipe(sourcemaps.write('.'))
         .pipe(remember('ts'))
         // .pipe(concat(config.concat))
         .pipe(gulp.dest(config.build))
+})
+
+gulp.task('build:bundles', function() {
+    return gulp
+        .src('./build/gulp-gate.js')
+        .pipe(plumber())
+        // .pipe(minify())
+        // .pipe(rename(function(path) {
+        //     path.basename += ".min";
+        // }))
+        // .pipe(gulp.dest('./build'))
+        .pipe(babel(config.babel))
+        .pipe(rename(function(path) {
+            path.basename += ".es5";
+        }))
+        .pipe(gulp.dest('./build'))
+        .pipe(minify())
+        .pipe(gulp.dest('./build'))
+
 })
 gulp.task('build:patch', npmVer('metadata'));
 gulp.task('bump', npmVer('minor'));
@@ -167,7 +92,37 @@ gulp.task("typedoc", function() {
             version: true,
         }));
 });
+gulp.task('bundle', function() {
+    // var production = util.env.type === 'production'
+    return browserify(config.browserify.src, {
+            extensions: ['.js'],
+            standalone: 'gulp-gate',
+            bundleExternal: false,
+            node: true
+        })
+        .bundle()
+        .pipe(vinyl(config.browserify.rename))
+        .pipe(gulp.dest(config.browserify.out))
+        // return gulp.src()
+
+    // // Browserify, and add source maps if this isn't a production build
+    // .pipe(browserify({
+    //     // debug: !production,
+    //     // transform: ['reactify'],
+    //     extensions: ['.js'],
+    //     standalone: 'gulp-gate'
+    // }))
+
+    // .pipe(rename(config.browserify.rename))
+    //     .pipe(gulp.dest(config.browserify.out))
+    // .on('prebundle', function(bundler) {
+    //     // Make React available externally for dev tools
+    //     bundler.require('react');
+    // })
+})
 gulp.task('tests', function() {
     return nodemon(config.nodemonjs('tests'));
 })
-gulp.task('default', ['watch']);
+gulp.task('default', ['watch'])
+
+module.exports = {}

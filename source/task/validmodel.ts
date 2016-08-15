@@ -31,7 +31,8 @@ class ValidatorModel {
                 protect:    bool(true),
                 sourceMaps: bool(true),
                 notify:     bool(false),
-                cache:      bool(true)
+                cache:      bool(true),
+                cleanBefore:bool(false)
             }
         }
     }

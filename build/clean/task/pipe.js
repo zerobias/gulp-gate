@@ -18,17 +18,27 @@ class Pipe {
         log.tags(['pipeFactory', 'batch', 'is array?']).log(isArray(obj));
         return isArray(obj);
     }
+    static Pipe(loader, opts) {
+        debugPrintFabric('Pipe');
+        return {
+            loader: loader,
+            opts: util_2.makeArrayIfIsnt(opts)
+        };
+    }
     static FabricArray(pipe) {
         debugPrintFabric('Array');
         return R.map(Pipe.FabricObject, pipe);
     }
     static FabricObject(pipe) {
         debugPrintFabric('Object');
+        let logKeys = _pipe => {
+            let keys = R.keys(_pipe);
+            log.tags(['pipe', 'keys', 'values']).log(`---------keys length ${keys.length} ${keys} ${R.values(_pipe)}`);
+        };
         const isValidPipe = (obj) => inspector.validate(validmodel_1.ValidatorModel.Pipe, obj).valid;
         const validPipeMaker = (_pipe) => R.when((e) => R.is(String, e.loader), R.pipe(util_1.reflectLogger((e) => log.debug('loader', loader_1.Loader.require(e.loader))), (e) => Pipe.Pipe(loader_1.Loader.require(e.loader), e.opts)))(_pipe);
         const isExactlyOneKey = R.pipe(R.keys, R.length, R.equals(1));
-        let keys = R.keys(pipe);
-        log.tags(['pipe', 'keys', 'values']).log(`---------keys length ${keys.length} ${keys} ${R.values(pipe)}`);
+        logKeys(pipe);
         return R.cond([
             [isExactlyOneKey, Pipe.FabricKeypair],
             [isValidPipe, validPipeMaker],
@@ -52,14 +62,19 @@ class Pipe {
         log.debug(resolved);
         return Pipe.Pipe(resolved, []);
     }
-    static Pipe(loader, opts) {
-        debugPrintFabric('Pipe');
-        return {
-            loader: loader,
-            opts: util_2.isntArray(opts)
-        };
-    }
 }
-Pipe.RenderPipeline = (pipeline) => R.reduce((acc, e) => e(acc), gulp.src('./source/*.styl'), R.map(Pipe.RenderPipe, pipeline));
+Pipe.RenderPipeline_deprecated = (pipeline) => R.reduce((acc, e) => e(acc), gulp.src('./source/*.styl'), R.map(Pipe.RenderPipe, pipeline));
 Pipe.RenderPipe = (pipe) => (pipable) => R.when(R.is(Function), l => pipable.pipe(R.apply(l, pipe.opts)))(pipe.loader);
+Pipe.RenderFirstPipe = (pipe) => R.when(R.is(Function), l => R.apply(l, pipe.opts))(pipe.loader);
 exports.Pipe = Pipe;
+class Pipeliner {
+}
+Pipeliner.append = (pipe) => (line) => R.append(pipe, line);
+Pipeliner.prepend = (pipe) => (line) => R.prepend(pipe, line);
+Pipeliner.enclose = (prepend, append) => (line) => R.pipe(Pipeliner.prepend(prepend), Pipeliner.append(append))(line);
+Pipeliner.render = (line) => {
+    let head = R.head(line);
+    let tail = R.tail(line);
+    return R.reduce((acc, e) => e(acc), Pipe.RenderFirstPipe(head), R.map(Pipe.RenderPipe, tail));
+};
+exports.Pipeliner = Pipeliner;

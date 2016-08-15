@@ -7,5 +7,5 @@ const reflectLogger = logger => object => {
     return object;
 };
 exports.reflectLogger = reflectLogger;
-const isntArray = R.when(R.pipe(R.is(Array), R.not), R.of);
-exports.isntArray = isntArray;
+const makeArrayIfIsnt = R.when(R.pipe(R.is(Array), R.not), R.of);
+exports.makeArrayIfIsnt = makeArrayIfIsnt;
