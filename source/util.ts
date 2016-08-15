@@ -6,8 +6,8 @@ const reflectLogger = logger=>object=> {
     logger(object)
     return object
 }
-const isntArray = R.when(R.pipe(R.is(Array),R.not),R.of)
+const makeArrayIfIsnt = R.when(R.pipe(R.is(Array),R.not),R.of)
 
 export { initPrint }
 export { reflectLogger }
-export { isntArray }
+export { makeArrayIfIsnt }

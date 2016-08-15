@@ -21,8 +21,10 @@ ResultConfigCheck.validate = (obj) => inspector.validate(validmodel_1.ValidatorM
 let conf = project_1.Projectlist.configSplitter(source);
 conf.render();
 conf.get('client').run();
-log.log(gulp.hasTask('client:stylus'));
-log.log(gulp.hasTask('client'));
+const hasTask = taskname => log.log(`gulp has task ${taskname}`, gulp.hasTask(taskname));
+hasTask('client:stylus');
+hasTask('client');
+hasTask('build-all');
 console.info(conf);
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = {};

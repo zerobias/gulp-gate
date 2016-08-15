@@ -35,8 +35,11 @@ class ResultConfigCheck {
 let conf = Projectlist.configSplitter(source)
 conf.render()
 conf.get('client').run()
-log.log(gulp.hasTask('client:stylus'))
-log.log(gulp.hasTask('client'))
+const hasTask = taskname=>log.log(`gulp has task ${taskname}`,gulp.hasTask(taskname))
+hasTask('client:stylus')
+hasTask('client')
+hasTask('build-all')
+
 console.info(conf)
 // console.log(inspector.validate(ResultConfigCheck.sanit,source))
 

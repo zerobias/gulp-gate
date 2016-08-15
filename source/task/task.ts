@@ -5,13 +5,17 @@ import * as path from 'path'
 
 import { Pipe as PipeFactory }  from './pipe'
 import { IPipe }                from './pipe'
+import { Pipeline }             from './pipe'
+import { Pipeliner }            from './pipe'
 import { ValidatorModel }       from './validmodel'
 import { Task }                 from './header'
 
-// import { Logger }               from '../logger'
-// const log = Logger.initPrint('task')
+import { Logger }               from '../logger'
+const log = Logger.initPrint('task')
 
 const inspector = require('schema-inspector')
+const plumber   = require('gulp-plumber')
+const sourcemaps= require('gulp-sourcemaps')
 
 // import { F } from './f';
 
@@ -27,21 +31,23 @@ interface ITaskOpts extends R.Dictionary<boolean> {
     protect:boolean,
     sourceMaps:boolean,
     notify:boolean,
-    cache:boolean
+    cache:boolean,
+    cleanBefore:boolean
 }
 
 type Filemask = string[]
 
 class TaskPreproc {
-    public static Morph(data:Task.ITaskAdapter):void {
+    public static Morph(data:Task.IMorphAdapter):void {
         let task = (<IJustTask>data).task
-        task.name = TaskPreproc.NameFabric(data)
-        task.filemask = TaskPreproc.FilemaskFabric(data)
-        task.dir = TaskPreproc.DirFabric(data)
-        task.taskOpts = TaskPreproc.TaskOptsFabric(data)
-        task.pipes = TaskPreproc.PipesFabric(data)
+
+        task.name       = TaskPreproc.NameFabric(data)
+        task.filemask   = TaskPreproc.FilemaskFabric(data)
+        task.dir        = TaskPreproc.DirFabric(data)
+        task.taskOpts   = TaskPreproc.TaskOptsFabric(data)
+        task.list       = TaskPreproc.PipesFabric(data)
     }
-    private static NameFabric(data:Task.ITaskAdapter):ITaskName {
+    private static NameFabric(data:Task.IMorphAdapter):ITaskName {
         const makeFullName = (subname:string,taskname:string)=>[subname,taskname].join(':')
         return {
             short:data.taskname,
@@ -51,14 +57,14 @@ class TaskPreproc {
     private static pathMaker(dirs:string[]):string {
         return R.pipe(R.prepend(process.cwd()),R.apply(path.join))(dirs)
     }
-    private static FilemaskFabric(data:Task.ITaskAdapter):string[] {
+    private static FilemaskFabric(data:Task.IMorphAdapter):string[] {
         let ext = data.defpath(['include','ext'])
         let filename = (_ext:string,name?:string)=>[name?name:'*',_ext].join('.')
         let deep = R.pathOr(false,['include','deep'])
         let result = R.pipe(ext,filename,R.of)
         return R.ifElse(deep,R.pipe(result,R.prepend('**')),result)(data.obj)
     }
-    private static DirFabric(data:Task.ITaskAdapter):ITaskDir {
+    private static DirFabric(data:Task.IMorphAdapter):ITaskDir {
         let defPath = (target:string)=>data.defpath(['dir',target])(data.obj)
         let pathArray = (target:string,targetFolder?:string)=>[
             targetFolder
@@ -72,25 +78,71 @@ class TaskPreproc {
             dest:TaskPreproc.pathMaker(pathArray('dest','build'))
         }
     }
-    private static TaskOptsFabric(data:Task.ITaskAdapter):ITaskOpts {
+    private static TaskOptsFabric(data:Task.IMorphAdapter):ITaskOpts {
         return inspector.sanitize(ValidatorModel.TaskOpts,R.propOr({},'taskOpts',data.obj)).data
     }
-    private static PipesFabric = (data:Task.ITaskAdapter):IPipe[]=>PipeFactory.BatchFabric(data)
+    private static PipesFabric = (data:Task.IMorphAdapter):IPipe[]=>PipeFactory.BatchFabric(data)
 }
+class PipelinePreproc {
+    public static Morph(task:FullTask):void {
+        task.list = PipelinePreproc.addMaps(task)
+        task.list = PipelinePreproc.addProtect(task)
+        task.list = PipelinePreproc.addSrcDest(task)
+    }
+    private static addSrcDest(task:FullTask):Pipeline {
+        const isDestExists = (_task:FullTask)=>
+            R.or(
+                R.not(R.isNil(_task.dir.dest)),
+                R.equals<string|boolean>(false,_task.dir.dest))
+        const getSrc = (_task:FullTask):IPipe=>
+            PipeFactory.Pipe(gulp.src,[_task.dir.source])
+        const getDest = (_task:FullTask):IPipe=>
+            PipeFactory.Pipe(gulp.dest,[_task.dir.dest])
+
+        const adder = function(task:FullTask):IPipe[] {
+            let isDest = isDestExists(task)
+            let src = getSrc(task)
+            let dest = ()=>getDest(task)
+            const add = isDest
+                ? Pipeliner.enclose(src,dest())
+                : Pipeliner.append(src)
+            return R.pipe(PipelinePreproc.list,add)(task)
+        }
+        return adder(task)
+    }
+    private static get list():(task:FullTask)=>Pipeline {
+        return R.prop('list')
+    }
+    private static addProtect(task:FullTask):Pipeline {
+        return R.ifElse(
+            R.path(['TaskOpts','protect']),
+            R.pipe(PipelinePreproc.list,Pipeliner.prepend(PipeFactory.Pipe(plumber,[]))),
+            PipelinePreproc.list)(task)
+    }
+    private static addMaps(task:FullTask):Pipeline {
+        return R.ifElse(
+            R.path(['taskOpts','sourceMaps']),
+            R.pipe(PipelinePreproc.list,Pipeliner.enclose(PipeFactory.Pipe(sourcemaps.init,[]),PipeFactory.Pipe(sourcemaps.write,['.']))),
+            PipelinePreproc.list)(task)
+    }
+}
+
 interface IJustTask {
     task?:FullTask
 }
+
 class FullTask {
     public name:ITaskName
     public dir :ITaskDir
     public filemask: string[]
     public taskOpts: ITaskOpts
-    public pipes: IPipe[]
+    public list: IPipe[]
     private rendered:boolean = false
     constructor(public subname:string,public taskname:string,public obj:Object) {
-        TaskPreproc.Morph(this.Adapter)
+        TaskPreproc.Morph(this.PreprocessAdapter)
+        PipelinePreproc.Morph(this)
     }
-    private get Adapter():Task.ITaskAdapter {
+    private get PreprocessAdapter():Task.IMorphAdapter {
         return {
             taskname:this.taskname,
             subname:this.subname,
@@ -99,27 +151,33 @@ class FullTask {
             task:this
         }
     }
-    private static get dest():NodeJS.ReadWriteStream {
-        return gulp.dest('./build/magic')
-    }
-    private get _render():NodeJS.ReadWriteStream {
-        const thisRender = ()=> {
-            let pipes = PipeFactory.RenderPipeline(this.pipes)
-            gulp.task(this.name.full,function():NodeJS.ReadWriteStream {return pipes.pipe(FullTask.dest)})
-            this.rendered = true
-            return pipes
+    public get UserAdapter():Task.IUserAdapter {
+        return {
+            task:this.name.short,
+            uid:this.name.full,
+            project:this.subname,
+            render:this.render,
+            run:this.run
         }
-        const onceRender = R.once(thisRender)
-        return onceRender()
     }
     public get uid():string {
         return this.name.full
     }
-    public render():NodeJS.ReadWriteStream {
-        return this._render
+    public render():void {
+        let self = this
+        let thisRender = function() {
+            let pipes = Pipeliner.render(self.list)
+            gulp.task(self.name.full,function() {return pipes})
+            self.rendered = true
+            return pipes
+        }
+        this.list.forEach(e=>log.info(`----------------loader ${e.loader} opts ${e.opts}`))
+        if (!this.rendered)
+            thisRender()
     }
+
     public run():Object {
-        if (!this.rendered) this.render()
+        this.render()
         return gulp.start([this.name.full])
     }
 }

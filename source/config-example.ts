@@ -8,7 +8,7 @@ import * as sourcemaps from 'gulp-sourcemaps';
 const stylus = require('gulp-stylus');
 const cssnano = require('gulp-cssnano');
 import * as concat from 'gulp-concat';
-// const nib = require('nib');
+const nib = require('nib');
 const sample = {
     source:{
         client:{
@@ -21,11 +21,6 @@ const sample = {
                     ext:'styl',
                     deep:true
                 },
-                depends: {
-                    stylus: stylus,
-                    cssnano: cssnano,
-                    concat: concat
-                },
                 taskOpts:{
                     sourceMaps:true
                 },
@@ -33,7 +28,7 @@ const sample = {
                     {
                         loader:'stylus',
                         opts:{
-                            use:[] // nib()
+                            use:[nib()]
                         }
                     },
                     'cssnano',

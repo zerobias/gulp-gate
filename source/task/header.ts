@@ -1,6 +1,13 @@
 
 declare module Task {
-    interface ITaskAdapter {
+    interface IUserAdapter {
+        task        :string
+        uid         :string
+        project     :string
+        render      :()=>void
+        run         :()=>Object
+    }
+    interface IMorphAdapter {
         taskname:string;
         subname:string;
         obj:Object;

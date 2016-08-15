@@ -2,71 +2,66 @@
 import * as R       from 'ramda'
 import * as gulp    from 'gulp'
 
+import { Task }     from './header'
 import { FullTask } from './task'
 
 interface IProject {
     uid:string
+    list:any[]
     render:()=>any
     run:()=>any
 }
 
-class Projectlist {
-    public static configSplitter(obj:Object):Projectlist {
-        const pairToTask = (pair:[string,any])=>R.apply(Project.configSplitter,pair)
-        const toPairs = <[string,any]>R.toPairs(obj)
-        let tasklist = R.map(pairToTask)(toPairs)
-        return new Projectlist(tasklist)
-    }
-    constructor(public list:Project[]) { }
-    private rendered:boolean = false
-    private get _render():Function {
-        const thisRender = ()=> {
-            this.list.forEach(e => e.render())
-            this.rendered = true
-        }
-        const onceRender = R.once(thisRender)
-        return onceRender
-    }
+type TPair = [string,any]
+const childNames = <T extends IProject>(obj:T)=><string[]>R.pluck('uid')(obj.list)
+class ObjectSplitter {
+    private static toPairs:(o:Object)=>TPair[] = R.toPairs
+    private static tasklist = <T>(construct:(pair:TPair)=>T)=>R.pipe(ObjectSplitter.toPairs,R.map(construct))
+    private static pairToProject:(pair:TPair)=>Project =
+        (pair:TPair)=>R.apply(Project.configSplitter,pair)
+    private static pairToTask =
+        projectname=>
+            (pair:TPair)=>new FullTask(projectname,pair[0],pair[1])
+    public static splitProjectlist = (obj:Object)=>
+        new Projectlist(ObjectSplitter.tasklist(ObjectSplitter.pairToProject)(obj));
+    public static splitProject = (obj:Object,projectname:string)=>
+        new Project(ObjectSplitter.tasklist(ObjectSplitter.pairToTask(projectname))(obj),projectname)
+
+}
+abstract class Renderable {
+    protected rendered:boolean = false
     public render():void {
-        return this._render()
+        let self = this
+        const thisRender = function() {
+            self.list.forEach(e => e.render())
+            self.rendered = true
+            gulp.task(self.uid,childNames(self))
+        }
+        if (!self.rendered)
+            thisRender()
     }
-    public run():void {
-        if (!this.rendered) this.render()
-        this.list.forEach(e=>e.run())
+    constructor(public list:any[],public uid:string) { }
+    public run():Object {
+        this.render()
+        // this.list.forEach(e=>e.run())
+        return gulp.start([this.uid])
     }
+    abstract get(elementname:string):any
+}
+class Projectlist extends Renderable {
+    public static configSplitter = (obj:Object):Projectlist=>
+        ObjectSplitter.splitProjectlist(obj)
+    constructor(public list:Project[]) { super(list,'build-all') }
     public get(projectname:string):Project {
         return R.find((e:Project)=>e.uid===projectname)(this.list)
     }
 }
-class Project {
-    public static configSplitter(projectname:string,obj:Object):Project {
-        const pairToTask = (pair:[string,any])=>new FullTask(projectname,pair[0],pair[1])
-        const toPairs = <[string,any]>R.toPairs(obj)
-        let tasklist = R.map(pairToTask)(toPairs)
-        return new Project(tasklist,projectname)
-    }
-    constructor(public list:FullTask[],public uid:string) { }
-    private rendered:boolean = false
-    private static childNames = (obj:Project)=>
-        R.map((e:IProject)=>e.uid)(obj.list);
-    private get _render():Function {
-        const thisRender = ()=> {
-            this.list.forEach(e => e.render())
-            this.rendered = true
-            gulp.task(this.uid,Project.childNames(this))
-        }
-        const onceRender = R.once(thisRender)
-        return onceRender
-    }
-    public render():void {
-        return this._render()
-    }
-    public run():Object {
-        if (!this.rendered) this.render()
-        return gulp.start([this.uid])
-    }
-    public get(taskname:string):FullTask {
-        return R.find((e:FullTask)=>e.name.short===taskname)(this.list)
+class Project extends Renderable {
+    public static configSplitter = (projectname:string,obj:Object):Project =>
+        ObjectSplitter.splitProject(obj,projectname)
+    constructor(public list:FullTask[],public uid:string) { super(list,uid) }
+    public get(taskname:string):Task.IUserAdapter {
+        return (R.find((e:FullTask)=>e.name.short===taskname)(this.list)).UserAdapter
     }
 }
 
