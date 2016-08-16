@@ -5,10 +5,7 @@ const config = function (obj) {
     list.render();
     return {
         run: () => list.run(),
-<<<<<<< HEAD
-=======
         render: () => list.render(),
->>>>>>> release/milestone-0
         get: (projectname) => list.get(projectname)
     };
 };

@@ -3,7 +3,7 @@ require('./semver')
 require('./tasks')
 require('./build')
 
-const runner = require('./example.js')
-runner.render()
+// const runner = require('./example.js')
+// runner.render()
 
 module.exports = {}

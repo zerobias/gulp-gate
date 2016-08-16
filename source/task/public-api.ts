@@ -7,10 +7,7 @@ const config = function(obj:Object):R.Dictionary<Function> {
     list.render()
     return {
         run:()=>list.run(),
-<<<<<<< HEAD
-=======
         render:()=>list.render(),
->>>>>>> release/milestone-0
         get:(projectname:string)=>list.get(projectname)
     }
 }

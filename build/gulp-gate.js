@@ -14,18 +14,6 @@ class Logger {
                 console.error('failed loading bucker plugin');
         });
     }
-<<<<<<< HEAD
-    get log() {
-        return this.logger.log;
-    }
-    get warn() {
-        return this.logger.warn;
-    }
-    get tags() {
-        return this.logger.tags;
-    }
-=======
->>>>>>> release/milestone-0
     static initPrint(name) {
         let log = new Logger(name);
         log.logger.tags(['module init']).log(`--module ${name}--`);
@@ -448,11 +436,6 @@ exports.ValidatorModel = ValidatorModel;
 },{}],7:[function(require,module,exports){
 "use strict";
 const R = require('ramda');
-<<<<<<< HEAD
-const initPrint = (name) => console.log(`--module ${name}--`);
-exports.initPrint = initPrint;
-=======
->>>>>>> release/milestone-0
 const reflectLogger = logger => object => {
     logger(object);
     return object;
@@ -469,10 +452,7 @@ const config = function (obj) {
     list.render();
     return {
         run: () => list.run(),
-<<<<<<< HEAD
-=======
         render: () => list.render(),
->>>>>>> release/milestone-0
         get: (projectname) => list.get(projectname)
     };
 };

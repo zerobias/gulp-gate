@@ -7,10 +7,7 @@
 /// <reference path="globals/gulp-plumber/index.d.ts" />
 /// <reference path="globals/gulp-remember/index.d.ts" />
 /// <reference path="globals/gulp-rename/index.d.ts" />
-<<<<<<< HEAD
-=======
 /// <reference path="globals/gulp-shell/index.d.ts" />
->>>>>>> release/milestone-0
 /// <reference path="globals/gulp-sourcemaps/index.d.ts" />
 /// <reference path="globals/gulp-tslint/index.d.ts" />
 /// <reference path="globals/gulp-typedoc/index.d.ts" />

@@ -104,8 +104,6 @@ module.exports = {
             typescript: typescript
         }
     },
-<<<<<<< HEAD
-=======
     typedoc: {
         // TypeScript options (see typescript docs)
         module: "commonjs",
@@ -121,7 +119,6 @@ module.exports = {
         ignoreCompilerErrors: true,
         version: true,
     },
->>>>>>> release/milestone-0
     concat: 'index.js',
     build: path.join(process.cwd(), 'build', 'clean'),
     maps: path.join(process.cwd(), 'build', 'clean', 'maps')

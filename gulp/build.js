@@ -55,10 +55,12 @@ gulp.task('build:bundles', function() {
 
 })
 gulp.task('build:concat', function() {
-    return shell.task("browserify --no-bundle-external --standalone 'gulp-gate' --node build/clean/task/public-api.js -o build/gulp-gate.js") })
+    return shell.task("browserify --no-bundle-external --standalone 'gulp-gate' --node build/clean/task/public-api.js -o build/gulp-gate.js")
+})
 
 gulp.task('build:all', function() {
-    return sequence('build', 'build:concat', 'build:bundles', 'semver:patch') })
+    return sequence('build', 'build:concat', 'build:bundles', 'semver:patch')
+})
 
 
 gulp.task('bundle', function() {

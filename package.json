@@ -1,6 +1,6 @@
 {
     "name": "gulp-gate",
-    "version": "0.1.95",
+    "version": "0.1.99",
     "description": "Neat project tasks interface",
     "main": "source/index.ts",
     "scripts": {
