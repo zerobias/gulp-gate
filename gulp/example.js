@@ -1,5 +1,5 @@
 // const gulp = require('gulp')
-const gate = require('./build/gulp-gate.es5-min.js')
+const gate = require('../build/gulp-gate.es5-min.js')
 
 const nib = require('nib');
 

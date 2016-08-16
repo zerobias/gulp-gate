@@ -1,4 +1,9 @@
-require('./semver.js')
-    // require('./tasks.js')
-console.log('a2')
+console.log('gulp config')
+require('./semver')
+require('./tasks')
+require('./build')
+
+const runner = require('./example.js')
+runner.render()
+
 module.exports = {}
