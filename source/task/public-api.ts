@@ -7,6 +7,7 @@ const config = function(obj:Object):R.Dictionary<Function> {
     list.render()
     return {
         run:()=>list.run(),
+        render:()=>list.render(),
         get:(projectname:string)=>list.get(projectname)
     }
 }

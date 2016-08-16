@@ -32,5 +32,7 @@ let config = {
 
 console.log(gate)
 let project = gate(config)
-project.run()
+    // project.run()
+    // project.render()
+module.exports = project
     // gulp.start(['bundle'])

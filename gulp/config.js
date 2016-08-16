@@ -103,6 +103,21 @@ module.exports = {
             typescript: typescript
         }
     },
+    typedoc: {
+        // TypeScript options (see typescript docs)
+        module: "commonjs",
+        target: "es2015",
+        includeDeclarations: false,
+
+        // Output options (see typedoc docs)
+        out: "./doc",
+        json: "index.json",
+
+        // TypeDoc options (see typedoc docs)
+        name: "gulp-gate",
+        ignoreCompilerErrors: true,
+        version: true,
+    },
     concat: 'index.js',
     build: path.join(process.cwd(), 'build', 'clean'),
     maps: path.join(process.cwd(), 'build', 'clean', 'maps')

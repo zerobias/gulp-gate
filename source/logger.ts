@@ -11,20 +11,11 @@ class Logger {
     private static options = settings;
     public logger:any;
     constructor(private modulename:string) {
-        this.logger = Bucker.createLogger(Logger.options, modulename, function (err) {
+        this.logger = Bucker.createLogger(Logger.options, modulename, function (err:Error):void {
             if (err) console.error('failed loading bucker plugin');
         });
     }
-    get log() {
-        return this.logger.log;
-    }
-    get warn() {
-        return this.logger.warn;
-    }
-    get tags():Function {
-        return this.logger.tags;
-    }
-    static initPrint(name:string) {
+    static initPrint(name:string):any {
         let log = new Logger(name);
         log.logger.tags(['module init']).log(`--module ${name}--`);
         return log.logger;

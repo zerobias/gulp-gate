@@ -59,22 +59,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     });
                 }
 
-                _createClass(Logger, [{
-                    key: "log",
-                    get: function get() {
-                        return this.logger.log;
-                    }
-                }, {
-                    key: "warn",
-                    get: function get() {
-                        return this.logger.warn;
-                    }
-                }, {
-                    key: "tags",
-                    get: function get() {
-                        return this.logger.tags;
-                    }
-                }], [{
+                _createClass(Logger, null, [{
                     key: "initPrint",
                     value: function initPrint(name) {
                         var log = new Logger(name);
@@ -738,10 +723,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             "use strict";
 
             var R = require('ramda');
-            var initPrint = function initPrint(name) {
-                return console.log("--module " + name + "--");
-            };
-            exports.initPrint = initPrint;
             var reflectLogger = function reflectLogger(logger) {
                 return function (object) {
                     logger(object);
@@ -761,6 +742,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 return {
                     run: function run() {
                         return list.run();
+                    },
+                    render: function render() {
+                        return list.render();
                     },
                     get: function get(projectname) {
                         return list.get(projectname);

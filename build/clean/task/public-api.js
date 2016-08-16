@@ -5,6 +5,7 @@ const config = function (obj) {
     list.render();
     return {
         run: () => list.run(),
+        render: () => list.render(),
         get: (projectname) => list.get(projectname)
     };
 };
