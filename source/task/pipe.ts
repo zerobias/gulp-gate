@@ -32,11 +32,6 @@ const debugPrintFabric = (name:string)=>log.tags(['fabric type']).log(`==Fabric 
 
 
 class Pipe {
-    public static RenderPipeline_deprecated =
-        (pipeline:Pipeline)=>R.reduce(
-            (acc,e)=>e(acc),
-            gulp.src('./source/*.styl'),
-            R.map(Pipe.RenderPipe,pipeline))
     public static BatchFabric(data:Task.IMorphAdapter):Pipeline {
         let obj = data.defpath(['pipe'])(data.obj)
         const isArray = R.when(R.is(Array),Pipe.FabricArray)
@@ -88,13 +83,13 @@ class Pipe {
             R.when(
                 (e:IPipe)=>R.is(String,e.loader),
                 R.pipe(
-                    reflectLogger((e:IPipe)=>log.debug('loader',Loader.require(e.loader))),
+                    // reflectLogger((e:IPipe)=>log.debug('loader',Loader.require(e.loader))),
                     (e:IPipe)=>Pipe.Pipe(
                         Loader.require(e.loader),
                         e.opts)
                 ))(_pipe)
         const isExactlyOneKey = R.pipe(R.keys,R.length,R.equals(1))
-        logKeys(pipe)
+        // logKeys(pipe)
         return R.cond([
             [isExactlyOneKey,Pipe.FabricKeypair],
             [isValidPipe,validPipeMaker],

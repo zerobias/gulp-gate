@@ -1,9 +1,7 @@
 "use strict";
 const R = require('ramda');
-const gulp = require('gulp');
 const gulpUtil = require('gulp-util');
 const util_1 = require('../util');
-const util_2 = require('../util');
 const validmodel_1 = require('./validmodel');
 const loader_1 = require('./loader');
 const logger_1 = require('../logger');
@@ -22,7 +20,7 @@ class Pipe {
         debugPrintFabric('Pipe');
         return {
             loader: loader,
-            opts: util_2.makeArrayIfIsnt(opts)
+            opts: util_1.makeArrayIfIsnt(opts)
         };
     }
     static FabricArray(pipe) {
@@ -36,9 +34,8 @@ class Pipe {
             log.tags(['pipe', 'keys', 'values']).log(`---------keys length ${keys.length} ${keys} ${R.values(_pipe)}`);
         };
         const isValidPipe = (obj) => inspector.validate(validmodel_1.ValidatorModel.Pipe, obj).valid;
-        const validPipeMaker = (_pipe) => R.when((e) => R.is(String, e.loader), R.pipe(util_1.reflectLogger((e) => log.debug('loader', loader_1.Loader.require(e.loader))), (e) => Pipe.Pipe(loader_1.Loader.require(e.loader), e.opts)))(_pipe);
+        const validPipeMaker = (_pipe) => R.when((e) => R.is(String, e.loader), R.pipe((e) => Pipe.Pipe(loader_1.Loader.require(e.loader), e.opts)))(_pipe);
         const isExactlyOneKey = R.pipe(R.keys, R.length, R.equals(1));
-        logKeys(pipe);
         return R.cond([
             [isExactlyOneKey, Pipe.FabricKeypair],
             [isValidPipe, validPipeMaker],
@@ -63,7 +60,6 @@ class Pipe {
         return Pipe.Pipe(resolved, []);
     }
 }
-Pipe.RenderPipeline_deprecated = (pipeline) => R.reduce((acc, e) => e(acc), gulp.src('./source/*.styl'), R.map(Pipe.RenderPipe, pipeline));
 Pipe.RenderPipe = (pipe) => (pipable) => R.when(R.is(Function), l => pipable.pipe(R.apply(l, pipe.opts)))(pipe.loader);
 Pipe.RenderFirstPipe = (pipe) => R.when(R.is(Function), l => R.apply(l, pipe.opts))(pipe.loader);
 exports.Pipe = Pipe;
