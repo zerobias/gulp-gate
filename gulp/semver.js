@@ -2,23 +2,17 @@
 // const R    = require('R')
 const gulp = require('gulp')
 const bump = require('gulp-bump')
+const path = require('path')
 
 const npmVer = vertype => function() {
-    return gulp.src('./package.json')
+    return gulp.src(path.join(process.cwd(), 'package.json'))
         .pipe(bump({ type: vertype }))
-        .pipe(gulp.dest('./'))
+        .pipe(gulp.dest(process.cwd()));
 }
-const BumpVersionTasks = function(typicalBumpTasks) {
-    const SemverTask = function(verType) {
-        const taskString = taskname => ['semver', taskname].join(':')
-        const bumpTask = vertype => gulp.task(taskString(vertype), npmVer(vertype))
-        return bumpTask(verType)
-    }
-    return typicalBumpTasks.map(SemverTask)
-}
-let bumpTasks = //currently not used
-    BumpVersionTasks(['major', 'minor', 'patch'])
-    // class BuildVersion {
 
-// }
-module.exports = bumpTasks
+gulp.task('semver:patch', npmVer('patch'))
+
+gulp.task('semver:minor', npmVer('minor'))
+gulp.task('semver:major', npmVer('major'))
+
+module.exports = {}
