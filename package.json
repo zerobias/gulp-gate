@@ -1,14 +1,23 @@
 {
   "name": "gulp-gate",
+<<<<<<< HEAD
   "version": "0.1.86+build0001",
+=======
+  "version": "0.1.90+build0001",
+>>>>>>> release/milestone-0
   "description": "Neat project tasks interface",
   "main": "source/index.ts",
   "scripts": {
     "test": "node ./build/clean/tests.js",
     "start": "node ./build/clean/index.js",
     "start-build": "node ./build/gulp-gate.js",
+<<<<<<< HEAD
     "preinstall": "gulp build",
     "postinstall": "browserify --no-bundle-external --standalone 'gulp-gate' --node build/clean/task/public-api.js -o build/gulp-gate.js"
+=======
+    "preinstall": "browserify --no-bundle-external --standalone 'gulp-gate' --node build/clean/task/public-api.js -o build/gulp-gate.js",
+    "postinstall": "gulp build:bundles"
+>>>>>>> release/milestone-0
   },
   "keywords": [
     "gulp",
@@ -57,6 +66,10 @@
     "gulp-minify-inline": "^0.2.1",
     "gulp-rename": "^1.2.2",
     "gulp-run": "^1.7.1",
+<<<<<<< HEAD
+=======
+    "gulp-shell": "^0.5.2",
+>>>>>>> release/milestone-0
     "gulp-stylus": "^2.5.0",
     "gulp-tslint": "^6.0.2",
     "gulp-typedoc": "^2.0.0",
@@ -79,6 +92,10 @@
     "rollup-plugin-istanbul": "^1.0.0",
     "rollup-plugin-node-resolve": "^2.0.0",
     "rollup-plugin-typescript": "^0.7.7",
+<<<<<<< HEAD
+=======
+    "run-sequence": "^1.2.2",
+>>>>>>> release/milestone-0
     "schema-inspector": "^1.6.5",
     "source-map": "^0.5.6",
     "splunkstorm": "^2.0.1",

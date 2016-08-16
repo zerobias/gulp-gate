@@ -17,6 +17,11 @@ const rename = require('gulp-rename')
 const browserify = require('browserify')
 const vinyl = require('vinyl-source-stream')
 const minify = require('gulp-minify')
+<<<<<<< HEAD
+=======
+const shell = require('gulp-shell')
+const sequence = require('run-sequence')
+>>>>>>> release/milestone-0
     // const webpackGulp = require('gulp-webpack')
     // const webpack = require('webpack')
 const config = require('./gulp/config')
@@ -59,33 +64,55 @@ gulp.task('build:bundles', function() {
         .pipe(gulp.dest('./build'))
 
 })
+<<<<<<< HEAD
 gulp.task('build:patch', npmVer('metadata'));
 gulp.task('bump', npmVer('minor'));
 gulp.task('release', npmVer('major'));
+=======
+gulp.task('build:concat', shell.task("browserify --no-bundle-external --standalone 'gulp-gate' --node build/clean/task/public-api.js -o build/gulp-gate.js"))
+gulp.task('build:patch', npmVer('metadata'))
+gulp.task('build:all', sequence('build', 'build:concat', 'build:bundles', 'build:patch'))
+gulp.task('bump', npmVer('minor'))
+gulp.task('release', npmVer('major'))
+>>>>>>> release/milestone-0
 gulp.task('watch', ['build'], function() {
     // return gulp
     //     .src(['./source/index.ts'])
     //     // .pipe(ts(tsproject))
     //     // .pipe(babel(config.babel))
     //     .pipe(nodemon(config.nodemon));
-    gulp.watch('./source/**/*.*ts', ['build']);
-    return nodemon(config.nodemonjs('index'));
-});
-var typedoc = require("gulp-typedoc");
+    gulp.watch('./source/**/*.*ts', ['build'])
+    return nodemon(config.nodemonjs('index'))
+})
+var typedoc = require("gulp-typedoc")
 
 gulp.task("typedoc", function() {
     return gulp
         .src(["source/*.ts"])
-        .pipe(typedoc({
-            // TypeScript options (see typescript docs)
-            module: "commonjs",
-            target: "es2015",
-            includeDeclarations: false,
+        .pipe(typedoc(config.typedoc));
+})
+gulp.task('bundle', function() {
+    // var production = util.env.type === 'production'
+    return browserify(config.browserify.src, {
+            extensions: ['.js'],
+            standalone: 'gulp-gate',
+            bundleExternal: false,
+            node: true
+        })
+        .bundle()
+        .pipe(vinyl(config.browserify.rename))
+        .pipe(gulp.dest(config.browserify.out))
+        // return gulp.src()
 
-            // Output options (see typedoc docs)
-            out: "./doc",
-            json: "index.json",
+    // // Browserify, and add source maps if this isn't a production build
+    // .pipe(browserify({
+    //     // debug: !production,
+    //     // transform: ['reactify'],
+    //     extensions: ['.js'],
+    //     standalone: 'gulp-gate'
+    // }))
 
+<<<<<<< HEAD
             // TypeDoc options (see typedoc docs)
             name: "gulp-gate",
             ignoreCompilerErrors: true,
@@ -113,6 +140,8 @@ gulp.task('bundle', function() {
     //     standalone: 'gulp-gate'
     // }))
 
+=======
+>>>>>>> release/milestone-0
     // .pipe(rename(config.browserify.rename))
     //     .pipe(gulp.dest(config.browserify.out))
     // .on('prebundle', function(bundler) {
@@ -123,6 +152,11 @@ gulp.task('bundle', function() {
 gulp.task('tests', function() {
     return nodemon(config.nodemonjs('tests'));
 })
+<<<<<<< HEAD
+=======
+const runner = require('./gulp-run.js')
+runner.render()
+>>>>>>> release/milestone-0
 gulp.task('default', ['watch'])
 
 module.exports = {}
