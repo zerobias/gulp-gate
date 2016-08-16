@@ -21,14 +21,15 @@ module.exports = {
     },
     nodemonjs: (scriptName) => {
         return {
-            script: 'build/clean/' + scriptName + '.js',
+            script: scriptName + '.js',
             ext: 'js ts',
             // tasks: ['build'],
             ignore: [
                 // 'build/clean/',
                 'doc/',
                 'node_modules/',
-                'test/',
+                'gulp/',
+                // 'test/',
                 'typings/',
                 'source/',
                 'gulpfile.js'

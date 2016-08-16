@@ -4,8 +4,8 @@ const typedoc = require("gulp-typedoc")
 
 const config = require('./config')
 
-gulp.task('tests', function() {
-    return nodemon(config.nodemonjs('tests'));
+gulp.task('test', function() {
+    return nodemon(config.nodemonjs('test/test'));
 })
 
 gulp.task('watch', ['build'], function() {
@@ -15,7 +15,7 @@ gulp.task('watch', ['build'], function() {
     //     // .pipe(babel(config.babel))
     //     .pipe(nodemon(config.nodemon));
     gulp.watch('./source/**/*.*ts', ['build'])
-    return nodemon(config.nodemonjs('index'))
+    return nodemon(config.nodemonjs('build/clean/index'))
 })
 
 gulp.task("typedoc", function() {
